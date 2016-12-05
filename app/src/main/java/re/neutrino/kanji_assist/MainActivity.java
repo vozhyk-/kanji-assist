@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private void ensureAssistantEnabled() {
         if (!isAssistantEnabled()) {
             Toast.makeText(this,
-                    R.string.please_enable_assistant, Toast.LENGTH_LONG);
+                    R.string.please_enable_assistant, Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_VOICE_INPUT_SETTINGS));
         }
     }
