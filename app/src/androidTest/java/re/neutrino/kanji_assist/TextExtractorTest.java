@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static re.neutrino.kanji_assist.TextExtractor.getSelectedText;
 
 @RunWith(AndroidJUnit4.class)
 public class TextExtractorTest extends AssistTest {
@@ -23,6 +22,10 @@ public class TextExtractorTest extends AssistTest {
     public void setUp() throws Exception {
         super.setUp();
         setThisAssistant();
+    }
+
+    private ScreenText getSelectedText(AssistStructure structure) {
+        return new TextExtractor(structure).getSelectedText();
     }
 
     @Test

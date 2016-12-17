@@ -9,9 +9,15 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 class TextExtractor {
+    private AssistStructure structure;
+
+    public TextExtractor(AssistStructure structure) {
+        this.structure = structure;
+    }
+
     @Nullable
-    static ScreenText getSelectedText(AssistStructure structure) {
-        return walkWindows(structure, new Walker() {
+    ScreenText getSelectedText() {
+        return walkWindows(new Walker() {
             @Override
             public ScreenText run(ViewNode node, Point position, int depth) {
                 if (node.getTextSelectionStart() == -1 ||
@@ -29,7 +35,7 @@ class TextExtractor {
     }
 
     @Nullable
-    private static ScreenText walkWindows(AssistStructure structure, Walker walker) {
+    private ScreenText walkWindows(Walker walker) {
         for (int i = 0; i < structure.getWindowNodeCount(); i++) {
             final WindowNode win = structure.getWindowNodeAt(i);
             final ScreenText found = walkViews(win.getRootViewNode(), walker);

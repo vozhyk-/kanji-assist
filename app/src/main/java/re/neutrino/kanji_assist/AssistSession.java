@@ -30,7 +30,7 @@ class AssistSession extends VoiceInteractionSession {
 
     @NonNull
     private ScreenText getSelectedTextToDisplay(AssistStructure structure) {
-        ScreenText result = TextExtractor.getSelectedText(structure);
+        ScreenText result = new TextExtractor(structure).getSelectedText();
         if (result != null) {
             Toast.makeText(getContext(),
                     "Found selected text", Toast.LENGTH_SHORT)
@@ -46,6 +46,7 @@ class AssistSession extends VoiceInteractionSession {
 
     private void showPopup(ScreenText screenText) {
         Dialog dialog = getWindow();
+        dialog.show();
         Log.d(getContext().getPackageName(), String.valueOf(dialog.isShowing()));
         dialog.setContentView(R.layout.popup);
         TextView textView = (TextView) dialog.findViewById(R.id.textView);
