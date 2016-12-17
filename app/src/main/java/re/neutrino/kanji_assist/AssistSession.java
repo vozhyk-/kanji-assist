@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.assist.AssistContent;
 import android.app.assist.AssistStructure;
 import android.content.Context;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.service.voice.VoiceInteractionSession;
 import android.support.annotation.NonNull;
@@ -22,14 +23,14 @@ class AssistSession extends VoiceInteractionSession {
     public void onHandleAssist(Bundle data, AssistStructure structure, AssistContent content) {
         super.onHandleAssist(data, structure, content);
 
-        String selected = getSelectedTextToDisplay(structure);
+        ScreenText selected = getSelectedTextToDisplay(structure);
 
-        showPopup(selected, TextExtractor.x, TextExtractor.y);
+        showPopup(selected);
     }
 
     @NonNull
-    private String getSelectedTextToDisplay(AssistStructure structure) {
-        String result = TextExtractor.getSelectedText(structure);
+    private ScreenText getSelectedTextToDisplay(AssistStructure structure) {
+        ScreenText result = TextExtractor.getSelectedText(structure);
         if (result != null) {
             Toast.makeText(getContext(),
                     "Found selected text", Toast.LENGTH_SHORT)
@@ -38,27 +39,28 @@ class AssistSession extends VoiceInteractionSession {
             Toast.makeText(getContext(),
                     "Selected text not found", Toast.LENGTH_SHORT)
                     .show();
-            result = "[No text selected]";
+            result = new ScreenText("[No text selected]", new Point(500, 500));
         }
         return result;
     }
 
-    private void showPopup(String text, float x, float y) {
+    private void showPopup(ScreenText screenText) {
         Dialog dialog = getWindow();
         Log.d(getContext().getPackageName(), String.valueOf(dialog.isShowing()));
         dialog.setContentView(R.layout.popup);
         TextView textView = (TextView) dialog.findViewById(R.id.textView);
-        textView.setText(text);
+        textView.setText(screenText.getText());
         Button button = (Button) dialog.findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 closePopup();
             }});
         View view = dialog.findViewById(R.id.popup);
-        Log.d(getContext().getPackageName(), String.valueOf(x));
-        Log.d(getContext().getPackageName(), String.valueOf(y));
-        view.setX(x);
-        view.setY(y);
+
+        final Point position = screenText.getPosition();
+        Log.d(getContext().getPackageName(), String.valueOf(position));
+        view.setX(position.x);
+        view.setY(position.y);
     }
 
     private void closePopup() {
