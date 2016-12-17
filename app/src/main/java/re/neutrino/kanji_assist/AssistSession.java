@@ -24,8 +24,7 @@ class AssistSession extends VoiceInteractionSession {
 
         String selected = getSelectedTextToDisplay(structure);
 
-        showPopup(selected, 100
-                , 200);
+        showPopup(selected, TextExtractor.x, TextExtractor.y);
     }
 
     @NonNull
@@ -56,6 +55,8 @@ class AssistSession extends VoiceInteractionSession {
                 closePopup();
             }});
         View view = dialog.findViewById(R.id.popup);
+        Log.d(getContext().getPackageName(), String.valueOf(x));
+        Log.d(getContext().getPackageName(), String.valueOf(y));
         view.setX(x);
         view.setY(y);
     }
