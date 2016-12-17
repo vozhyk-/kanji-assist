@@ -1,6 +1,5 @@
 package re.neutrino.kanji_assist;
 
-import android.app.Dialog;
 import android.app.assist.AssistContent;
 import android.app.assist.AssistStructure;
 import android.content.Context;
@@ -8,10 +7,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.service.voice.VoiceInteractionSession;
 import android.support.annotation.NonNull;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 class AssistSession extends VoiceInteractionSession {
@@ -25,7 +20,7 @@ class AssistSession extends VoiceInteractionSession {
 
         ScreenText selected = getSelectedTextToDisplay(structure);
 
-        showPopup(selected);
+        new DictionaryPopup(getWindow(), getContext()).show(selected);
     }
 
     @NonNull
@@ -44,28 +39,4 @@ class AssistSession extends VoiceInteractionSession {
         return result;
     }
 
-    private void showPopup(ScreenText screenText) {
-        Dialog dialog = getWindow();
-        dialog.show();
-        Log.d(getContext().getPackageName(), String.valueOf(dialog.isShowing()));
-        dialog.setContentView(R.layout.popup);
-        TextView textView = (TextView) dialog.findViewById(R.id.textView);
-        textView.setText(screenText.getText());
-        Button button = (Button) dialog.findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                closePopup();
-            }});
-        View view = dialog.findViewById(R.id.popup);
-
-        final Point position = screenText.getPosition();
-        Log.d(getContext().getPackageName(), String.valueOf(position));
-        view.setX(position.x);
-        view.setY(position.y);
-    }
-
-    private void closePopup() {
-        Dialog dialog = getWindow();
-        dialog.dismiss();
-    }
 }
