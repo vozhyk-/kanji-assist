@@ -4,14 +4,11 @@ import android.app.assist.AssistStructure;
 import android.content.Intent;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiObject;
-import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -36,7 +33,7 @@ public class TextExtractorTest extends AssistTest {
     }
 
     @Test
-    public void testExtract_textEdit() throws UiObjectNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException {
+    public void testExtract_textEdit() throws Exception {
         startActivityAsNewTask(new Intent(context,
                 re.neutrino.kanji_assist.TestExtractTextViewActivity.class));
 
@@ -48,11 +45,11 @@ public class TextExtractorTest extends AssistTest {
         requestAssist();
     }
 
-    private void requestAssist() throws UiObjectNotFoundException, NoSuchMethodException, NoSuchFieldException, IllegalAccessException, InvocationTargetException {
+    private void requestAssist() throws Exception {
         longPressHome();
     }
 
-    private void longPressHome() throws UiObjectNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException {
-        throw new Error("Not implemented");
+    private void longPressHome() throws Exception {
+        Runtime.getRuntime().exec("su root input swipe 540 1860 540 1860 1000");
     }
 }
