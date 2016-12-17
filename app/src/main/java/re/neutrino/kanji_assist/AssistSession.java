@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.service.voice.VoiceInteractionSession;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 class AssistSession extends VoiceInteractionSession {
     AssistSession(Context context) {
@@ -26,15 +25,8 @@ class AssistSession extends VoiceInteractionSession {
     @NonNull
     private ScreenText getSelectedTextToDisplay(AssistStructure structure) {
         ScreenText result = new TextExtractor(structure).getSelectedText();
-        if (result != null) {
-            Toast.makeText(getContext(),
-                    "Found selected text", Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-            Toast.makeText(getContext(),
-                    "Selected text not found", Toast.LENGTH_SHORT)
-                    .show();
-            result = new ScreenText("[No text selected]", new Point(500, 500));
+        if (result == null) {
+            return new ScreenText("[No text selected]", new Point(500, 500));
         }
         return result;
     }
