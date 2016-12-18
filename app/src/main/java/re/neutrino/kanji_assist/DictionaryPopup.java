@@ -21,9 +21,9 @@ class DictionaryPopup {
         dialog.show();
         Log.d(context.getPackageName(), String.valueOf(dialog.isShowing()));
         dialog.setContentView(R.layout.popup);
-        TextView textView = (TextView) dialog.findViewById(R.id.textView);
+        TextView textView = (TextView) dialog.findViewById(R.id.textSelected);
         textView.setText(screenText.getText());
-        Button button = (Button) dialog.findViewById(R.id.button);
+        Button button = (Button) dialog.findViewById(R.id.buttonClose);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 close();
