@@ -3,7 +3,7 @@ package re.neutrino.kanji_assist;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class TestExtractTextViewActivity extends AppCompatActivity {
+public class TestExtractTextEditActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

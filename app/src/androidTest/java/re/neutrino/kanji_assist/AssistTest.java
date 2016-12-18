@@ -1,37 +1,14 @@
 package re.neutrino.kanji_assist;
 
-import android.app.Instrumentation;
-import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
-import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.junit.Before;
-
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-
-class AssistTest {
-    protected Instrumentation instr;
-    protected Context globalContext;
-    protected Context context;
-    protected UiDevice device;
-
-    protected String appName;
-
-    @Before
-    public void setUp() throws Exception {
-        instr = getInstrumentation();
-        globalContext = instr.getContext();
-        context = instr.getTargetContext();
-        device = UiDevice.getInstance(instr);
-
-        appName = context.getString(R.string.app_name);
-    }
+class AssistTest extends BasicTest {
 
     protected void setThisAssistant() throws UiObjectNotFoundException {
         setAssistant(appName);

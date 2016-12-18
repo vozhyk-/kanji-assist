@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="re.neutrino.kanji_assist">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application>
         <activity
-            android:name=".TestExtractTextViewActivity"
+            android:name=".TestExtractTextEditActivity"
             android:exported="true">
 
             <intent-filter>

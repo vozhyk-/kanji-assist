@@ -1,17 +1,14 @@
 package re.neutrino.kanji_assist;
 
 
-import android.app.assist.AssistStructure;
-import android.app.assist.AssistStructure.ViewNode;
-import android.app.assist.AssistStructure.WindowNode;
 import android.graphics.Point;
 import android.support.annotation.Nullable;
 import android.view.View;
 
 class TextExtractor {
-    private AssistStructure structure;
+    private AnyAssistStructure structure;
 
-    public TextExtractor(AssistStructure structure) {
+    public TextExtractor(AnyAssistStructure structure) {
         this.structure = structure;
     }
 
@@ -19,7 +16,7 @@ class TextExtractor {
     ScreenText getSelectedText() {
         return walkWindows(new Walker() {
             @Override
-            public ScreenText run(ViewNode node, Point position, int depth) {
+            public ScreenText run(AnyAssistStructure.AnyViewNode node, Point position, int depth) {
                 if (node.getTextSelectionStart() == -1 ||
                         node.getTextSelectionStart() == node.getTextSelectionEnd()) {
                     return null;
@@ -37,7 +34,7 @@ class TextExtractor {
     @Nullable
     private ScreenText walkWindows(Walker walker) {
         for (int i = 0; i < structure.getWindowNodeCount(); i++) {
-            final WindowNode win = structure.getWindowNodeAt(i);
+            final AnyAssistStructure.AnyWindowNode win = structure.getWindowNodeAt(i);
             final ScreenText found = walkViews(win.getRootViewNode(), walker);
             if (found != null) {
                 return found;
@@ -48,13 +45,13 @@ class TextExtractor {
 
     @Nullable
     private static ScreenText walkViews(
-        ViewNode node, Walker walker) {
+            AnyAssistStructure.AnyViewNode node, Walker walker) {
         return walkViews(node, new Point(0, 0), walker, 0);
     }
 
     @Nullable
     private static ScreenText walkViews(
-            ViewNode node, Point position, Walker walker, int depth) {
+            AnyAssistStructure.AnyViewNode node, Point position, Walker walker, int depth) {
         if (node.getVisibility() != View.VISIBLE)
             return null;
 
@@ -76,6 +73,6 @@ class TextExtractor {
     }
 
     private interface Walker {
-        ScreenText run(ViewNode node, Point position, int depth);
+        ScreenText run(AnyAssistStructure.AnyViewNode node, Point position, int depth);
     }
 }
