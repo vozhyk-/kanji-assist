@@ -20,7 +20,6 @@ class DictionaryPopup {
     }
 
     public void show(ScreenText screenText) {
-        dialog.show();
         Log.d(context.getPackageName(), String.valueOf(dialog.isShowing()));
         dialog.setContentView(R.layout.popup);
 

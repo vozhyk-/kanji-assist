@@ -2,6 +2,7 @@ package re.neutrino.kanji_assist;
 
 
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -13,7 +14,7 @@ class TextExtractor {
     }
 
     @Nullable
-    ScreenText getSelectedText() {
+   public ScreenText getSelectedText() {
         return walkWindows(new Walker() {
             @Override
             public ScreenText run(AnyAssistStructure.AnyViewNode node, Point position, int depth) {
@@ -70,6 +71,10 @@ class TextExtractor {
         }
 
         return null;
+    }
+
+    public ScreenText getTouchedText(PointF touchLocation) {
+        return new ScreenText("a", new Point(200, 200));
     }
 
     private interface Walker {

@@ -3,12 +3,13 @@ package re.neutrino.kanji_assist;
 import android.app.assist.AssistContent;
 import android.app.assist.AssistStructure;
 import android.content.Context;
-import android.graphics.Point;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Environment;
 import android.service.voice.VoiceInteractionSession;
-import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,8 +17,23 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 class AssistSession extends VoiceInteractionSession {
+
+    private TextExtractor textExtractor;
+    private DictionaryPopup dictionaryPopup;
+
     AssistSession(Context context) {
         super(context);
+    }
+
+    @Override
+    public View onCreateContentView() {
+        final View result = super.onCreateContentView();
+
+        dictionaryPopup = new DictionaryPopup(getWindow(), getContext());
+        getWindow().getWindow().getDecorView()
+                .setOnTouchListener(new OnTouchListener());
+
+        return result;
     }
 
     @Override
@@ -28,11 +44,16 @@ class AssistSession extends VoiceInteractionSession {
     }
 
     private void onHandleAssist(AnyAssistStructure structure) {
+        getWindow().show();
+
+        textExtractor = new TextExtractor(structure);
+
         saveStructureForDebug(this, structure);
 
-        ScreenText selected = getSelectedTextToDisplay(structure);
-
-        new DictionaryPopup(getWindow(), getContext()).show(selected);
+        ScreenText selected = textExtractor.getSelectedText();
+        if (selected != null) {
+            dictionaryPopup.show(selected);
+        }
     }
 
     private static void saveStructureForDebug(AssistSession assistSession, AnyAssistStructure structure) {
@@ -68,13 +89,17 @@ class AssistSession extends VoiceInteractionSession {
         return Environment.MEDIA_MOUNTED.equals(state);
     }
 
-    @NonNull
-    private ScreenText getSelectedTextToDisplay(AnyAssistStructure structure) {
-        ScreenText result = new TextExtractor(structure).getSelectedText();
-        if (result == null) {
-            return new ScreenText("[No text selected]", new Point(500, 500));
-        }
-        return result;
-    }
+    private class OnTouchListener implements View.OnTouchListener {
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            final PointF touchLocation =
+                    new PointF(event.getX(), event.getY());
+            Log.d(getClass().getName(),
+                    touchLocation.toString());
 
+            dictionaryPopup.show(textExtractor.getTouchedText(touchLocation));
+
+            return false;
+        }
+    }
 }
