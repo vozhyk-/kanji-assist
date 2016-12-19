@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+
+import static java.lang.Math.min;
 
 class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
     final static String baseApiUrl = "http://jisho.org/api/v1/search/words?keyword=";
@@ -34,7 +37,15 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             DictionaryParser dictionaryParser = new DictionaryParser(inputStream);
             dictionaryParser.read();
             connection.disconnect();
-            return dictionaryParser.examples.subList(0, 2).toString();
+            List<DictionaryParser.Example> topExamples = dictionaryParser.examples;
+            List<DictionaryParser.Sense> topSenses = dictionaryParser.senses;
+            String ret = "";
+            for (int i = 0; i < min(topExamples.size(), topSenses.size()); i++) {
+                DictionaryParser.Example example = topExamples.get(i);
+                DictionaryParser.Sense sense = topSenses.get(i);
+                ret += example.word + " [" + example.reading + "] " + sense.definitions.toString() + "\n";
+            }
+            return ret;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
