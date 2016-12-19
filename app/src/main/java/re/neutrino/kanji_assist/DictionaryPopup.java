@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -39,8 +41,26 @@ class DictionaryPopup {
 
         final Point position = screenText.getPosition();
         Log.d(context.getPackageName(), String.valueOf(position));
-        view.setX(position.x);
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        Log.d("show", size.toString());
+        float vertical_margin = context.getResources().getDimension(R.dimen.popup_vertical_margin);
+        float height = context.getResources().getDimension(R.dimen.popup_height);
+        if (position.y > size.y/2) {
+            // bottom half
+            Log.d("show", "bottom");
+            position.y -= height + vertical_margin;
+        } else {
+            // top half
+            Log.d("show", "top");
+            position.y += vertical_margin;
+        }
         view.setY(position.y);
+        //view.setX(position.x);
+        Log.d("show", String.valueOf(height));
+        Log.d("show", position.toString());
     }
 
     private void close() {
