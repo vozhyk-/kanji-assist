@@ -4,10 +4,12 @@ package re.neutrino.kanji_assist;
 import android.os.Environment;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 
 class AssistStructureSaver {
     public AssistStructureSaver() {
@@ -21,7 +23,7 @@ class AssistStructureSaver {
                 new FakeAssistStructure(structure);
 
         if (!isExternalStorageWritable()) {
-            Log.w("saveStructureForDebug",
+            Log.w(getClass().getName(),
                     "External storage not writable, not saving assist structure");
             return;
         }
@@ -29,16 +31,19 @@ class AssistStructureSaver {
         // TODO Ask for permission interactively
 
         File file = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOCUMENTS), "assist.bin");
-        if (!file.getParentFile().mkdirs()) {
-            Log.e("saveStructureForDebug", "Directory not created, not saving assist structure");
-        }
+                Environment.DIRECTORY_DOCUMENTS), "assist.json");
+        file.getParentFile().mkdirs();
 
         try (FileOutputStream output = new FileOutputStream(file)) {
-            new ObjectOutputStream(output).writeObject(fakeStructure);
+            try (OutputStreamWriter writer = new OutputStreamWriter(output)) {
+                writer.write(new Gson().toJson(fakeStructure));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Log.i(getClass().getName(),
+                "Saved assist structure to " + file);
     }
 
     private boolean isExternalStorageWritable() {
