@@ -3,23 +3,25 @@ package re.neutrino.kanji_assist;
 interface AnyAssistStructure {
     int getWindowNodeCount();
 
-    AnyWindowNode getWindowNodeAt(int i);
+    WindowNode getWindowNodeAt(int i);
 
-    interface AnyWindowNode {
-        AnyViewNode getRootViewNode();
+    interface WindowNode {
+        ViewNode getRootViewNode();
     }
 
-    interface AnyViewNode {
+    interface ViewNode {
         int getVisibility();
 
         int getLeft();
         int getTop();
+        int getWidth();
+        int getHeight();
 
         CharSequence getText();
         int getTextSelectionStart();
         int getTextSelectionEnd();
 
         int getChildCount();
-        AnyViewNode getChildAt(int i);
+        ViewNode getChildAt(int i);
     }
 }

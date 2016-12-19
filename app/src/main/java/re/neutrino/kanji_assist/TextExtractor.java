@@ -3,7 +3,10 @@ package re.neutrino.kanji_assist;
 
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 
 class TextExtractor {
@@ -14,28 +17,61 @@ class TextExtractor {
     }
 
     @Nullable
-   public ScreenText getSelectedText() {
+    public ScreenText getSelectedText() {
         return walkWindows(new Walker() {
             @Override
-            public ScreenText run(AnyAssistStructure.AnyViewNode node, Point position, int depth) {
+            public ScreenText run(AnyAssistStructure.ViewNode node, Rect rect, int depth) {
                 if (node.getTextSelectionStart() == -1 ||
                         node.getTextSelectionStart() == node.getTextSelectionEnd()) {
                     return null;
                 }
 
-                final String text = node.getText().subSequence(
+                final CharSequence text = node.getText().subSequence(
                         node.getTextSelectionStart(),
-                        node.getTextSelectionEnd())
-                        .toString();
-                return new ScreenText(text, position);
+                        node.getTextSelectionEnd());
+                return makeScreenText(text, rect);
             }
         });
     }
 
     @Nullable
+    public ScreenText getTouchedText(final PointF touch) {
+        final ScreenText[] lastFound = new ScreenText[1];
+        walkWindows(new Walker() {
+            @Override
+            public ScreenText run(AnyAssistStructure.ViewNode node, Rect rect, int depth) {
+                if (rect.contains((int)touch.x, (int)touch.y)) {
+                    Log.d(getClass().getName(), getLogOffset(depth) +
+                            rect.toShortString());
+
+                    lastFound[0] = makeScreenText(node.getText(), rect);
+                }
+                return null;
+            }
+        });
+
+        return lastFound[0];
+    }
+
+    @NonNull
+    private ScreenText makeScreenText(CharSequence text, Rect rect) {
+        if (text == null)
+            return null;
+        return new ScreenText(text.toString(),
+                new Point(rect.left, rect.top));
+    }
+
+    private String getLogOffset(int depth) {
+        String result = "";
+        for (int i = 0; i < depth; i++)
+            result += " ";
+        return result;
+    }
+
+    @Nullable
     private ScreenText walkWindows(Walker walker) {
         for (int i = 0; i < structure.getWindowNodeCount(); i++) {
-            final AnyAssistStructure.AnyWindowNode win = structure.getWindowNodeAt(i);
+            final AnyAssistStructure.WindowNode win = structure.getWindowNodeAt(i);
             final ScreenText found = walkViews(win.getRootViewNode(), walker);
             if (found != null) {
                 return found;
@@ -46,26 +82,28 @@ class TextExtractor {
 
     @Nullable
     private static ScreenText walkViews(
-            AnyAssistStructure.AnyViewNode node, Walker walker) {
-        return walkViews(node, new Point(0, 0), walker, 0);
+            AnyAssistStructure.ViewNode node, Walker walker) {
+        return walkViews(node, new Rect(0, 0, 0, 0), walker, 0);
     }
 
     @Nullable
     private static ScreenText walkViews(
-            AnyAssistStructure.AnyViewNode node, Point position, Walker walker, int depth) {
+            AnyAssistStructure.ViewNode node, Rect rect, Walker walker, int depth) {
         if (node.getVisibility() != View.VISIBLE)
             return null;
 
-        position = new Point(
-                position.x + node.getLeft(),
-                position.y + node.getTop());
+        final int left = rect.left + node.getLeft();
+        final int top = rect.top + node.getTop();
+        rect = new Rect(
+                left, top,
+                left + node.getWidth(), top + node.getHeight());
 
-        ScreenText found = walker.run(node, position, depth);
+        ScreenText found = walker.run(node, rect, depth);
         if (found != null)
             return found;
 
         for (int i = 0; i < node.getChildCount(); i++) {
-            found = walkViews(node.getChildAt(i), position, walker, depth + 1);
+            found = walkViews(node.getChildAt(i), rect, walker, depth + 1);
             if (found != null)
                 return found;
         }
@@ -73,11 +111,7 @@ class TextExtractor {
         return null;
     }
 
-    public ScreenText getTouchedText(PointF touchLocation) {
-        return new ScreenText("a", new Point(200, 200));
-    }
-
     private interface Walker {
-        ScreenText run(AnyAssistStructure.AnyViewNode node, Point position, int depth);
+        ScreenText run(AnyAssistStructure.ViewNode node, Rect position, int depth);
     }
 }

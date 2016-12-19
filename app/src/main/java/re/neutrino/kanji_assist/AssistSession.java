@@ -97,7 +97,11 @@ class AssistSession extends VoiceInteractionSession {
             Log.d(getClass().getName(),
                     touchLocation.toString());
 
-            dictionaryPopup.show(textExtractor.getTouchedText(touchLocation));
+            final ScreenText text = textExtractor.getTouchedText(touchLocation);
+            if (text != null) {
+                dictionaryPopup.show(text);
+                return true;
+            }
 
             return false;
         }

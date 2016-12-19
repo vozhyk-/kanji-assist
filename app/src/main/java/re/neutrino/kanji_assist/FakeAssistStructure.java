@@ -17,36 +17,40 @@ class FakeAssistStructure implements AnyAssistStructure, Serializable {
     }
 
     @Override
-    public AnyWindowNode getWindowNodeAt(int i) {
+    public AnyAssistStructure.WindowNode getWindowNodeAt(int i) {
         return windowNodes.get(i);
     }
 
-    private class WindowNode implements AnyWindowNode, Serializable {
+    private class WindowNode implements AnyAssistStructure.WindowNode, Serializable {
         private ViewNode rootViewNode;
-        public WindowNode(AnyWindowNode window) {
+        public WindowNode(AnyAssistStructure.WindowNode window) {
             this.rootViewNode = new ViewNode(window.getRootViewNode());
         }
 
         @Override
-        public AnyViewNode getRootViewNode() {
+        public AnyAssistStructure.ViewNode getRootViewNode() {
             return rootViewNode;
         }
     }
 
-    private class ViewNode implements AnyViewNode, Serializable {
+    private class ViewNode implements AnyAssistStructure.ViewNode, Serializable {
         private int visibility;
         private int left;
         private int top;
+        private int width;
+        private int height;
         private String text;
         private int textSelectionStart;
         private int textSelectionEnd;
 
         private ArrayList<ViewNode> children = new ArrayList<>();
 
-        public ViewNode(AnyViewNode node) {
+        public ViewNode(AnyAssistStructure.ViewNode node) {
             this.visibility = node.getVisibility();
             this.left = node.getLeft();
             this.top = node.getTop();
+            this.width = node.getWidth();
+            this.height = node.getHeight();
             final CharSequence text = node.getText();
             this.text = text != null ? text.toString() : null;
             this.textSelectionStart = node.getTextSelectionStart();
@@ -72,6 +76,16 @@ class FakeAssistStructure implements AnyAssistStructure, Serializable {
         }
 
         @Override
+        public int getWidth() {
+            return width;
+        }
+
+        @Override
+        public int getHeight() {
+            return height;
+        }
+
+        @Override
         public CharSequence getText() {
             return text;
         }
@@ -92,7 +106,7 @@ class FakeAssistStructure implements AnyAssistStructure, Serializable {
         }
 
         @Override
-        public AnyViewNode getChildAt(int i) {
+        public AnyAssistStructure.ViewNode getChildAt(int i) {
             return children.get(i);
         }
     }

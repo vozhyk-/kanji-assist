@@ -15,11 +15,11 @@ class RealAssistStructure implements AnyAssistStructure {
     }
 
     @Override
-    public AnyWindowNode getWindowNodeAt(int i) {
+    public AnyAssistStructure.WindowNode getWindowNodeAt(int i) {
         return new WindowNode(structure.getWindowNodeAt(i));
     }
 
-    private class WindowNode implements AnyWindowNode {
+    private class WindowNode implements AnyAssistStructure.WindowNode {
         private final AssistStructure.WindowNode window;
 
         public WindowNode(AssistStructure.WindowNode window) {
@@ -27,12 +27,12 @@ class RealAssistStructure implements AnyAssistStructure {
         }
 
         @Override
-        public AnyViewNode getRootViewNode() {
+        public AnyAssistStructure.ViewNode getRootViewNode() {
             return new ViewNode(window.getRootViewNode());
         }
     }
 
-    private class ViewNode implements AnyViewNode {
+    private class ViewNode implements AnyAssistStructure.ViewNode {
         private final AssistStructure.ViewNode node;
 
         public ViewNode(AssistStructure.ViewNode node) {
@@ -52,6 +52,16 @@ class RealAssistStructure implements AnyAssistStructure {
         @Override
         public int getTop() {
             return node.getTop();
+        }
+
+        @Override
+        public int getWidth() {
+            return node.getWidth();
+        }
+
+        @Override
+        public int getHeight() {
+            return node.getHeight();
         }
 
         @Override
