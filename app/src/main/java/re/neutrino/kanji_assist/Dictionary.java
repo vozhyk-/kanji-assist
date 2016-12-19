@@ -1,6 +1,5 @@
 package re.neutrino.kanji_assist;
 
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
