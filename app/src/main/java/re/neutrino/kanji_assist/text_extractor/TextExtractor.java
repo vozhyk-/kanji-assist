@@ -1,10 +1,8 @@
 package re.neutrino.kanji_assist.text_extractor;
 
 
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -38,29 +36,32 @@ public class TextExtractor {
 
     @Nullable
     public ScreenText getTouchedText(final PointF touch) {
-        final ScreenText[] lastFound = new ScreenText[1];
-        walkWindows(new Walker() {
+        final ScreenText[] mostNarrow = {null};
+
+        final Walker walker = new Walker() {
             @Override
             public ScreenText run(AnyAssistStructure.ViewNode node, Rect rect, int depth) {
-                if (rect.contains((int)touch.x, (int)touch.y)) {
+                if (rect.contains((int) touch.x, (int) touch.y)) {
                     Log.d(getClass().getName(), getLogOffset(depth) +
                             rect.toShortString());
 
-                    lastFound[0] = makeScreenText(node.getText(), rect);
+                    /*if (mostNarrow == null ||
+                            mostNarrow)*/
+                    mostNarrow[0] = makeScreenText(node.getText(), rect);
                 }
                 return null;
             }
-        });
+        };
+        walkWindows(walker);
 
-        return lastFound[0];
+        return mostNarrow[0];
     }
 
-    @NonNull
+    @Nullable
     private ScreenText makeScreenText(CharSequence text, Rect rect) {
         if (text == null)
             return null;
-        return new ScreenText(text.toString(),
-                new Point(rect.left, rect.top));
+        return new ScreenText(text.toString(), rect);
     }
 
     private String getLogOffset(int depth) {

@@ -3,6 +3,7 @@ package re.neutrino.kanji_assist;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -41,8 +42,8 @@ class DictionaryPopup {
 
         View view = dialog.findViewById(R.id.popup);
 
-        final Point position = screenText.getPosition();
-        Log.d(context.getPackageName(), String.valueOf(position));
+        final Rect textRect = screenText.getRect();
+        Log.d(context.getPackageName(), String.valueOf(textRect));
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
@@ -50,19 +51,19 @@ class DictionaryPopup {
         Log.d("show", size.toString());
         float vertical_margin = context.getResources().getDimension(R.dimen.popup_vertical_margin);
         float height = context.getResources().getDimension(R.dimen.popup_height);
-        if (position.y > size.y/2) {
+        if (textRect.bottom > size.y/2) {
             // bottom half
             Log.d("show", "bottom");
-            position.y -= height + vertical_margin;
+            textRect.bottom -= height + vertical_margin;
         } else {
             // top half
             Log.d("show", "top");
-            position.y += vertical_margin;
+            textRect.bottom += vertical_margin;
         }
-        view.setY(position.y);
-        //view.setX(position.x);
+        view.setY(textRect.bottom);
+        //view.setX(textRect.x);
         Log.d("show", String.valueOf(height));
-        Log.d("show", position.toString());
+        Log.d("show", textRect.toString());
     }
 
     private void close() {

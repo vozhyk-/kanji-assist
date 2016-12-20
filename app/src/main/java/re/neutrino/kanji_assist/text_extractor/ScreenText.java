@@ -1,19 +1,19 @@
 package re.neutrino.kanji_assist.text_extractor;
 
-import android.graphics.Point;
+import android.graphics.Rect;
 
 public class ScreenText {
     private String text;
-    private Point position;
+    private Rect rect;
 
-    public ScreenText(String text, Point position) {
+    public ScreenText(String text, Rect rect) {
         this.text = text;
-        this.position = position;
+        this.rect = rect;
     }
 
     @Override
     public String toString() {
-        return getText() + " @ " + getPosition();
+        return getText() + " @ " + getRect();
     }
 
     @Override
@@ -21,7 +21,7 @@ public class ScreenText {
         if (obj instanceof ScreenText) {
             final ScreenText other = (ScreenText) obj;
             return getText().equals(other.getText()) &&
-                    getPosition().equals(other.getPosition());
+                    getRect().equals(other.getRect());
         }
         return super.equals(obj);
     }
@@ -30,7 +30,7 @@ public class ScreenText {
         return text;
     }
 
-    public Point getPosition() {
-        return position;
+    public Rect getRect() {
+        return rect;
     }
 }

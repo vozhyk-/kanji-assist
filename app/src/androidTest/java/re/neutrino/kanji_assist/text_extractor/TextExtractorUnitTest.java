@@ -1,8 +1,8 @@
 package re.neutrino.kanji_assist.text_extractor;
 
 import android.app.assist.AssistStructure;
-import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.google.gson.Gson;
@@ -52,7 +52,7 @@ public class TextExtractorUnitTest extends BasicTest {
 
         final ScreenText sel = new TextExtractor(structure).getSelectedText();
         assertThat(sel,
-                is(new ScreenText("first", new Point(42, 252))));
+                is(new ScreenText("first", new Rect(42, 252, 592, 370))));
     }
 
     // 4 kanji of different colors in a row, in Chrome
@@ -63,13 +63,13 @@ public class TextExtractorUnitTest extends BasicTest {
         final TextExtractor t = new TextExtractor(structure);
 
         assertThat(t.getTouchedText(new PointF(400, 320)),
-                is(new ScreenText("錯", new Point(373, 276))));
+                is(new ScreenText("錯", new Rect(373, 276, 430, 353))));
         assertThat(t.getTouchedText(new PointF(460, 320)),
-                is(new ScreenText("視", new Point(430, 276))));
+                is(new ScreenText("視", new Rect(430, 276, 487, 353))));
         assertThat(t.getTouchedText(new PointF(515, 320)),
-                is(new ScreenText("入", new Point(488, 276))));
+                is(new ScreenText("入", new Rect(488, 276, 545, 353))));
         assertThat(t.getTouchedText(new PointF(575, 320)),
-                is(new ScreenText("門", new Point(545, 276))));
+                is(new ScreenText("門", new Rect(545, 276, 602, 353))));
     }
 
     @Test
