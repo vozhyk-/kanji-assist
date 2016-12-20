@@ -1,8 +1,10 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.text_extractor;
 
 import android.graphics.Point;
 
 import org.junit.Test;
+
+import re.neutrino.kanji_assist.text_extractor.ScreenText;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;

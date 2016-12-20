@@ -1,4 +1,4 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.text_extractor;
 
 
 import android.graphics.Point;
@@ -9,7 +9,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
-class TextExtractor {
+import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
+
+public class TextExtractor {
     private AnyAssistStructure structure;
 
     public TextExtractor(AnyAssistStructure structure) {

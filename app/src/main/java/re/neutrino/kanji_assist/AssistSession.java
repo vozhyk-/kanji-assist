@@ -10,6 +10,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
+import re.neutrino.kanji_assist.assist_structure.RealAssistStructure;
+import re.neutrino.kanji_assist.text_extractor.ScreenText;
+import re.neutrino.kanji_assist.text_extractor.TextExtractor;
+
 class AssistSession extends VoiceInteractionSession {
 
     private TextExtractor textExtractor;

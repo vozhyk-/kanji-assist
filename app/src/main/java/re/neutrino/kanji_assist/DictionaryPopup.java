@@ -10,6 +10,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import re.neutrino.kanji_assist.text_extractor.ScreenText;
+
 class DictionaryPopup {
     Dialog dialog;
     Context context;

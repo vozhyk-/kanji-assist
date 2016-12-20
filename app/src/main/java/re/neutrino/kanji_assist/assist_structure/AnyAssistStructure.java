@@ -1,6 +1,6 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.assist_structure;
 
-interface AnyAssistStructure {
+public interface AnyAssistStructure {
     int getWindowNodeCount();
 
     WindowNode getWindowNodeAt(int i);

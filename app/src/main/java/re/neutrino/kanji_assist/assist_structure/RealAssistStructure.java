@@ -1,8 +1,8 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.assist_structure;
 
 import android.app.assist.AssistStructure;
 
-class RealAssistStructure implements AnyAssistStructure {
+public class RealAssistStructure implements AnyAssistStructure {
     private final AssistStructure structure;
 
     public RealAssistStructure(AssistStructure structure) {
@@ -22,7 +22,7 @@ class RealAssistStructure implements AnyAssistStructure {
     private class WindowNode implements AnyAssistStructure.WindowNode {
         private final AssistStructure.WindowNode window;
 
-        public WindowNode(AssistStructure.WindowNode window) {
+        WindowNode(AssistStructure.WindowNode window) {
             this.window = window;
         }
 
@@ -35,7 +35,7 @@ class RealAssistStructure implements AnyAssistStructure {
     private class ViewNode implements AnyAssistStructure.ViewNode {
         private final AssistStructure.ViewNode node;
 
-        public ViewNode(AssistStructure.ViewNode node) {
+        ViewNode(AssistStructure.ViewNode node) {
             this.node = node;
         }
 

@@ -1,8 +1,8 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.text_extractor;
 
 import android.graphics.Point;
 
-class ScreenText {
+public class ScreenText {
     private String text;
     private Point position;
 

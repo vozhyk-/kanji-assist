@@ -1,9 +1,9 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.assist_structure;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-class FakeAssistStructure implements AnyAssistStructure, Serializable {
+public class FakeAssistStructure implements AnyAssistStructure, Serializable {
     private ArrayList<WindowNode> windowNodes = new ArrayList<>();
 
     public FakeAssistStructure(AnyAssistStructure structure) {
@@ -23,7 +23,7 @@ class FakeAssistStructure implements AnyAssistStructure, Serializable {
 
     private class WindowNode implements AnyAssistStructure.WindowNode, Serializable {
         private ViewNode rootViewNode;
-        public WindowNode(AnyAssistStructure.WindowNode window) {
+        WindowNode(AnyAssistStructure.WindowNode window) {
             this.rootViewNode = new ViewNode(window.getRootViewNode());
         }
 
@@ -45,7 +45,7 @@ class FakeAssistStructure implements AnyAssistStructure, Serializable {
 
         private ArrayList<ViewNode> children = new ArrayList<>();
 
-        public ViewNode(AnyAssistStructure.ViewNode node) {
+        ViewNode(AnyAssistStructure.ViewNode node) {
             this.visibility = node.getVisibility();
             this.left = node.getLeft();
             this.top = node.getTop();

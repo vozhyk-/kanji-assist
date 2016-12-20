@@ -1,4 +1,4 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.text_extractor;
 
 import android.app.assist.AssistStructure;
 import android.graphics.Point;
@@ -13,6 +13,11 @@ import org.junit.runner.RunWith;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import re.neutrino.kanji_assist.BasicTest;
+import re.neutrino.kanji_assist.R;
+import re.neutrino.kanji_assist.assist_structure.FakeAssistStructure;
+import re.neutrino.kanji_assist.assist_structure.RealAssistStructure;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

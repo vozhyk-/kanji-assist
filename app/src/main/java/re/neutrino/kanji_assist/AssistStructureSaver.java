@@ -11,6 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
+import re.neutrino.kanji_assist.assist_structure.FakeAssistStructure;
+
 class AssistStructureSaver {
     public AssistStructureSaver() {
     }

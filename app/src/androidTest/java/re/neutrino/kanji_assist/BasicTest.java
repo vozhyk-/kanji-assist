@@ -8,7 +8,7 @@ import org.junit.Before;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
-class BasicTest {
+public class BasicTest {
     protected Instrumentation instr;
     protected Context globalContext;
     protected Context context;
