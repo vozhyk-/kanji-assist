@@ -1,6 +1,9 @@
 package re.neutrino.kanji_assist.assist_structure;
 
 import android.app.assist.AssistStructure;
+import android.content.ComponentName;
+import android.graphics.Matrix;
+import android.os.Bundle;
 
 public class RealAssistStructure implements AnyAssistStructure {
     private final AssistStructure structure;
@@ -19,6 +22,11 @@ public class RealAssistStructure implements AnyAssistStructure {
         return new WindowNode(structure.getWindowNodeAt(i));
     }
 
+    @Override
+    public ComponentName getActivityComponent() {
+        return structure.getActivityComponent();
+    }
+
     private class WindowNode implements AnyAssistStructure.WindowNode {
         private final AssistStructure.WindowNode window;
 
@@ -29,6 +37,36 @@ public class RealAssistStructure implements AnyAssistStructure {
         @Override
         public AnyAssistStructure.ViewNode getRootViewNode() {
             return new ViewNode(window.getRootViewNode());
+        }
+
+        @Override
+        public int getDisplayId() {
+            return window.getDisplayId();
+        }
+
+        @Override
+        public int getLeft() {
+            return window.getLeft();
+        }
+
+        @Override
+        public int getTop() {
+            return window.getTop();
+        }
+
+        @Override
+        public int getWidth() {
+            return window.getWidth();
+        }
+
+        @Override
+        public int getHeight() {
+            return window.getHeight();
+        }
+
+        @Override
+        public CharSequence getTitle() {
+            return window.getTitle();
         }
     }
 
@@ -42,6 +80,16 @@ public class RealAssistStructure implements AnyAssistStructure {
         @Override
         public int getVisibility() {
             return node.getVisibility();
+        }
+
+        @Override
+        public boolean isAssistBlocked() {
+            return node.isAssistBlocked();
+        }
+
+        @Override
+        public String getClassName() {
+            return node.getClassName();
         }
 
         @Override
@@ -65,8 +113,28 @@ public class RealAssistStructure implements AnyAssistStructure {
         }
 
         @Override
+        public int getScrollX() {
+            return node.getScrollX();
+        }
+
+        @Override
+        public int getScrollY() {
+            return node.getScrollY();
+        }
+
+        @Override
         public CharSequence getText() {
             return node.getText();
+        }
+
+        @Override
+        public String getHint() {
+            return node.getHint();
+        }
+
+        @Override
+        public CharSequence getContentDescription() {
+            return node.getContentDescription();
         }
 
         @Override
@@ -77,6 +145,131 @@ public class RealAssistStructure implements AnyAssistStructure {
         @Override
         public int getTextSelectionEnd() {
             return node.getTextSelectionEnd();
+        }
+
+        @Override
+        public int[] getTextLineBaselines() {
+            return node.getTextLineBaselines();
+        }
+
+        @Override
+        public int[] getTextLineCharOffsets() {
+            return node.getTextLineCharOffsets();
+        }
+
+        @Override
+        public float getTextSize() {
+            return node.getTextSize();
+        }
+
+        @Override
+        public float getAlpha() {
+            return node.getAlpha();
+        }
+
+        @Override
+        public float getElevation() {
+            return node.getElevation();
+        }
+
+        @Override
+        public int getTextColor() {
+            return node.getTextColor();
+        }
+
+        @Override
+        public int getTextBackgroundColor() {
+            return node.getTextBackgroundColor();
+        }
+
+        @Override
+        public int getTextStyle() {
+            return node.getTextStyle();
+        }
+
+        @Override
+        public Matrix getTransformation() {
+            return node.getTransformation();
+        }
+
+        @Override
+        public int getId() {
+            return node.getId();
+        }
+
+        @Override
+        public String getIdEntry() {
+            return node.getIdEntry();
+        }
+
+        @Override
+        public String getIdPackage() {
+            return node.getIdPackage();
+        }
+
+        @Override
+        public String getIdType() {
+            return node.getIdType();
+        }
+
+        @Override
+        public Bundle getExtras() {
+            return node.getExtras();
+        }
+
+        @Override
+        public boolean isAccessibilityFocused() {
+            return node.isAccessibilityFocused();
+        }
+
+        @Override
+        public boolean isActivated() {
+            return node.isActivated();
+        }
+
+        @Override
+        public boolean isFocusable() {
+            return node.isFocusable();
+        }
+
+        @Override
+        public boolean isFocused() {
+            return node.isFocused();
+        }
+
+        @Override
+        public boolean isSelected() {
+            return node.isSelected();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return node.isEnabled();
+        }
+
+        @Override
+        public boolean isClickable() {
+            return node.isClickable();
+        }
+
+        @Override
+        public boolean isContextClickable() {
+            return node.isContextClickable();
+        }
+
+        @Override
+        public boolean isLongClickable() {
+            return node.isLongClickable();
+        }
+
+        @Override
+        public boolean isCheckable() {
+            return false;
+        }
+
+        @Override
+        public boolean isChecked() {
+            return false;
         }
 
         @Override
