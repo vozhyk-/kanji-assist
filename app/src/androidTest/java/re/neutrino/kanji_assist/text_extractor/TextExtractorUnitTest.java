@@ -78,8 +78,19 @@ public class TextExtractorUnitTest extends BasicTest {
                 readAssistStructure(R.raw.colorful);
         final TextExtractor t = new TextExtractor(structure);
 
-        assertThat(t.getTouchedText(new PointF(100, 1625)),
+        assertThat(t.getTouchedText(new PointF(830, 80)),
                 nullValue());
+    }
+
+    // Touching empty space when there is a big node with invisible text
+    @Test
+    public void getTouchedText_bigParentNodeWithText_emptySpace() throws Exception {
+        final FakeAssistStructure structure =
+                readAssistStructure(R.raw.colorful);
+        final TextExtractor t = new TextExtractor(structure);
+
+        assertThat(t.getTouchedText(new PointF(100, 1625)),
+                is(new ScreenText("錯視入門", new Rect(0, 210, 1081, 16016))));
     }
 
     private FakeAssistStructure readAssistStructure(int res) throws Exception {
