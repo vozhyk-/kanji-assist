@@ -6,6 +6,7 @@ import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiSelector;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -17,6 +18,7 @@ public class TextExtractorTest extends AssistTest {
         setThisAssistant();
     }
 
+    @Ignore
     @Test
     public void testExtract_textEdit() throws Exception {
         startActivityAsNewTask(new Intent(context,
