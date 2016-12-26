@@ -1,4 +1,4 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.dictionary_popup;
 
 import android.util.Log;
 import android.view.View;

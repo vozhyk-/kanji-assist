@@ -21,7 +21,7 @@
         </activity>
         
         <service
-            android:name=".AssistService"
+            android:name=".service.AssistService"
             android:permission="android.permission.BIND_VOICE_INTERACTION">
 
             <meta-data
@@ -33,7 +33,7 @@
         </service>
         
         <service
-            android:name=".AssistSessionService"
+            android:name=".service.AssistSessionService"
             android:permission="android.permission.BIND_VOICE_INTERACTION" />
     </application>
 </manifest>

@@ -1,4 +1,4 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.service;
 
 
 import android.os.Environment;
@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import re.neutrino.kanji_assist.BuildConfig;
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.assist_structure.FakeAssistStructure;
 

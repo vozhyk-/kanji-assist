@@ -1,4 +1,4 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.service;
 
 import android.app.assist.AssistContent;
 import android.app.assist.AssistStructure;
@@ -12,6 +12,7 @@ import android.view.View;
 
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.assist_structure.RealAssistStructure;
+import re.neutrino.kanji_assist.dictionary_popup.DictionaryPopup;
 import re.neutrino.kanji_assist.text_extractor.ScreenText;
 import re.neutrino.kanji_assist.text_extractor.TextExtractor;
 

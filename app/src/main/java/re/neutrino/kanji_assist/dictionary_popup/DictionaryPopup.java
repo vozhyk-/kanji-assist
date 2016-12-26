@@ -1,4 +1,4 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.dictionary_popup;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -11,12 +11,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import re.neutrino.kanji_assist.R;
 import re.neutrino.kanji_assist.text_extractor.ScreenText;
 
-class DictionaryPopup {
-    Dialog dialog;
-    Context context;
-    Dictionary dictionary;
+public class DictionaryPopup {
+    private Dialog dialog;
+    private Context context;
+    private Dictionary dictionary;
 
     public DictionaryPopup(Dialog dialog, Context context) {
         this.dialog = dialog;

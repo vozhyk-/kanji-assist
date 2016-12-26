@@ -1,6 +1,5 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.service;
 
-import android.app.Service;
 import android.service.voice.VoiceInteractionService;
 
 public class AssistService extends VoiceInteractionService {

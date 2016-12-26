@@ -1,4 +1,4 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.dictionary_popup;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -7,18 +7,20 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+
+import re.neutrino.kanji_assist.dictionary.DictionaryParser;
 
 import static java.lang.Math.min;
 
 class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
-    final static String baseApiUrl = "http://jisho.org/api/v1/search/words?keyword=";
-    final static String debugName = "backgroundTask";
-    HttpURLConnection connection;
-    URL url;
-    TextView textView;
+    private final static String baseApiUrl =
+            "http://jisho.org/api/v1/search/words?keyword=";
+    private final static String debugName = "backgroundTask";
+    private HttpURLConnection connection;
+    private URL url;
+    private TextView textView;
 
     DictionaryBackgroundTask(TextView textView) {
         this.textView = textView;
@@ -37,17 +39,19 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             DictionaryParser dictionaryParser = new DictionaryParser(inputStream);
             dictionaryParser.read();
             connection.disconnect();
-            List<DictionaryParser.Example> topExamples = dictionaryParser.examples;
-            List<DictionaryParser.Sense> topSenses = dictionaryParser.senses;
+            List<DictionaryParser.Example> topExamples =
+                    dictionaryParser.getExamples();
+            List<DictionaryParser.Sense> topSenses =
+                    dictionaryParser.getSenses();
             String ret = "";
             for (int i = 0; i < min(topExamples.size(), topSenses.size()); i++) {
                 DictionaryParser.Example example = topExamples.get(i);
                 DictionaryParser.Sense sense = topSenses.get(i);
-                ret += example.word + " [" + example.reading + "] " + sense.definitions.toString() + "\n";
+                ret += example.getWord() +
+                        " [" + example.getReading() + "] "
+                        + sense.getDefinitions().toString() + "\n";
             }
             return ret;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

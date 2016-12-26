@@ -1,4 +1,4 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.service;
 
 import android.os.Bundle;
 import android.service.voice.VoiceInteractionSession;

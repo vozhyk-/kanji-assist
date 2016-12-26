@@ -1,4 +1,4 @@
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.dictionary;
 
 import android.util.JsonReader;
 import android.util.Log;
@@ -10,10 +10,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 public class DictionaryParser {
-    final static String debugName = "dictionaryParser";
-    JsonReader reader;
-    ArrayList<Example> examples = new ArrayList<>();
-    ArrayList<Sense> senses = new ArrayList<>();
+    private final static String debugName = "dictionaryParser";
+    private JsonReader reader;
+    private ArrayList<Example> examples = new ArrayList<>();
+    private ArrayList<Sense> senses = new ArrayList<>();
 
     public DictionaryParser(InputStream inputStream) throws UnsupportedEncodingException {
         reader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -54,23 +54,35 @@ public class DictionaryParser {
         reader.endObject();
     }
 
-    class Sense {
-        ArrayList<String> definitions = new ArrayList<>();
+    public ArrayList<Example> getExamples() {
+        return examples;
+    }
+
+    public ArrayList<Sense> getSenses() {
+        return senses;
+    }
+
+    public class Sense {
+        private ArrayList<String> definitions = new ArrayList<>();
 
         public String toString() {
-            return "definitions: " + definitions.toString();
+            return "definitions: " + getDefinitions().toString();
+        }
+
+        public ArrayList<String> getDefinitions() {
+            return definitions;
         }
     }
 
     private void readSenses() throws  IOException {
         reader.beginArray();
         while (reader.hasNext()) {
-            senses.add(readSense());
+            getSenses().add(readSense());
         }
         reader.endArray();
     }
 
-    Sense readSense() throws IOException {
+    private Sense readSense() throws IOException {
         Sense sense = new Sense();
         reader.beginObject();
         while (reader.hasNext()) {
@@ -78,7 +90,7 @@ public class DictionaryParser {
             if (name.equals("english_definitions")) {
                 reader.beginArray();
                 while (reader.hasNext())
-                    sense.definitions.add(reader.nextString());
+                    sense.getDefinitions().add(reader.nextString());
                 reader.endArray();
             } else {
                 reader.skipValue();
@@ -89,24 +101,32 @@ public class DictionaryParser {
         return sense;
     }
 
-    class Example {
-        String word;
-        String reading;
+    public class Example {
+        private String word;
+        private String reading;
 
         public String toString() {
-            return "word: " + word + ", reading: " + reading;
+            return "word: " + getWord() + ", reading: " + getReading();
+        }
+
+        public String getWord() {
+            return word;
+        }
+
+        public String getReading() {
+            return reading;
         }
     }
 
     private void readExamples() throws IOException {
         reader.beginArray();
         while (reader.hasNext()) {
-            examples.add(readExample());
+            getExamples().add(readExample());
         }
         reader.endArray();
     }
 
-    Example readExample() throws IOException {
+    private Example readExample() throws IOException {
         Example example = new Example();
         reader.beginObject();
         while (reader.hasNext()) {
