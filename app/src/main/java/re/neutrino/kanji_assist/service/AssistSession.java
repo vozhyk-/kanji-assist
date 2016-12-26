@@ -19,6 +19,7 @@ import re.neutrino.kanji_assist.text_extractor.TextExtractor;
 class AssistSession extends VoiceInteractionSession {
 
     private TextExtractor textExtractor;
+    private AssistStructureVisualizer visualizer;
     private DictionaryPopup dictionaryPopup;
 
     AssistSession(Context context) {
@@ -29,7 +30,9 @@ class AssistSession extends VoiceInteractionSession {
     public View onCreateContentView() {
         final View result = super.onCreateContentView();
 
+        visualizer = new AssistStructureVisualizer(getWindow());
         dictionaryPopup = new DictionaryPopup(getWindow(), getContext());
+
         getWindow().getWindow().getDecorView()
                 .setOnTouchListener(new OnTouchListener());
 
@@ -49,6 +52,8 @@ class AssistSession extends VoiceInteractionSession {
         textExtractor = new TextExtractor(structure);
 
         new AssistStructureSaver().saveStructureForDebug(structure);
+
+        visualizer.show(structure);
 
         ScreenText selected = textExtractor.getSelectedText();
         if (selected != null) {
