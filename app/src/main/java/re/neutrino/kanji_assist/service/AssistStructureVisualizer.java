@@ -3,6 +3,7 @@ package re.neutrino.kanji_assist.service;
 import android.app.Dialog;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import re.neutrino.kanji_assist.text_extractor.ScreenText;
 class AssistStructureVisualizer {
     private final Dialog dialog;
     private final LayoutInflater inflater;
+    private String TAG = getClass().getName();
 
     public AssistStructureVisualizer(Dialog dialog) {
         this.dialog = dialog;
@@ -33,8 +35,11 @@ class AssistStructureVisualizer {
         structureWalker.walkWindows(new AssistStructureWalker.Walker() {
             @Override
             public ScreenText run(AnyAssistStructure.ViewNode node, Rect position, int depth) {
+                if (node.getText() == null)
+                    return null;
+
                 final TextView textView =
-                        recreateTextView(node, position, layout);
+                        recreateTextView(node, position, depth, layout);
                 layout.addView(textView);
                 return null;
             }
@@ -43,11 +48,20 @@ class AssistStructureVisualizer {
 
     @NonNull
     private TextView recreateTextView(AnyAssistStructure.ViewNode node,
-                                      Rect position, RelativeLayout layout) {
+                                      Rect position, int depth, RelativeLayout layout) {
         final TextView result = (TextView)
                 inflater.inflate(R.layout.recreated_textview, layout, false);
+
+        final String offset = AssistStructureWalker.getLogOffset(depth);
+
         result.setText(node.getText());
+        result.setTextSize(TypedValue.COMPLEX_UNIT_PX, node.getTextSize());
         result.setTypeface(result.getTypeface(), node.getTextStyle());
+        // TODO Text {color, background color}
+
+        result.setAlpha(node.getAlpha());
+        result.setElevation(node.getElevation());
+        // TODO Transformation
 
         final RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(

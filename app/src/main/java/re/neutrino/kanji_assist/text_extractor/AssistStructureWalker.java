@@ -44,7 +44,7 @@ public class AssistStructureWalker {
         return null;
     }
 
-    public String getLogOffset(int depth) {
+    public static String getLogOffset(int depth) {
         String result = "";
         for (int i = 0; i < depth; i++)
             result += " ";
