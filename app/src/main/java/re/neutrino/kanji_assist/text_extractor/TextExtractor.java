@@ -53,13 +53,18 @@ public class TextExtractor {
                     return null;
                 }
 
-                final String PREFIX = structureWalker.getLogOffset(depth);
+                final String PREFIX = AssistStructureWalker.getLogOffset(depth);
                 Log.d(TAG, PREFIX +
                         "Node: " +
                         node.getText() + " @ " +
                         rect.toShortString());
 
                 if (mostNarrow[0] != null) {
+                    if (area(rect) > area(mostNarrow[0].getRect())) {
+                        Log.d(TAG, PREFIX + "ignoring larger node ^^^");
+                        return null;
+                    }
+
                     final boolean ok = rect.intersect(mostNarrow[0].getRect());
                     if (!ok)
                         Log.w(TAG, "Found a view containing the touch that doesn't intersect with the other such views!");
@@ -67,7 +72,27 @@ public class TextExtractor {
 
                 mostNarrow[0] = makeScreenText(node.getText(), rect);
                 Log.d(TAG, PREFIX + "most narrow: " + mostNarrow[0]);
+                Log.d(TAG, PREFIX + "most narrow: " +
+                        node.getHint() + " " +
+                        node.getContentDescription() + " " +
+                        "\n" +
+                        node.isAccessibilityFocused() + " " +
+                        node.isActivated() + " " +
+                        node.isFocusable() + " " +
+                        node.isFocused() + " " +
+                        node.isSelected() + " " +
+                        "\n" +
+                        node.isEnabled() + " " +
+                        node.isClickable() + " " +
+                        node.isContextClickable() + " " +
+                        node.isLongClickable() + " " +
+                        node.isCheckable() + " " +
+                        node.isChecked());
                 return null;
+            }
+
+            private int area(Rect rect) {
+                return rect.width() * rect.height();
             }
         };
         structureWalker.walkWindows(walker);
