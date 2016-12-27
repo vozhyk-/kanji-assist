@@ -8,8 +8,14 @@ import android.os.Bundle;
 public class RealAssistStructure implements AnyAssistStructure {
     private final AssistStructure structure;
 
-    public RealAssistStructure(AssistStructure structure) {
+    private RealAssistStructure(AssistStructure structure) {
         this.structure = structure;
+    }
+
+    public static RealAssistStructure createFrom(AssistStructure structure) {
+        return structure != null ?
+                new RealAssistStructure(structure) :
+                null;
     }
 
     @Override

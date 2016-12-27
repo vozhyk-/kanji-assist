@@ -29,7 +29,7 @@ public class TextExtractorUnitTest extends BasicTest {
     @Test
     public void getSelectedText_emptyStructure() throws Exception {
         final RealAssistStructure structure =
-                new RealAssistStructure(new AssistStructure());
+                RealAssistStructure.createFrom(new AssistStructure());
         final TextExtractor t = new TextExtractor(structure);
 
         Assert.assertThat(t.getSelectedText(), nullValue());

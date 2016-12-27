@@ -9,6 +9,7 @@ import android.service.voice.VoiceInteractionSession;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.assist_structure.RealAssistStructure;
@@ -43,10 +44,19 @@ class AssistSession extends VoiceInteractionSession {
     public void onHandleAssist(Bundle data, AssistStructure structure, AssistContent content) {
         super.onHandleAssist(data, structure, content);
 
-        onHandleAssist(new RealAssistStructure(structure));
+        onHandleAssist(RealAssistStructure.createFrom(structure));
     }
 
     private void onHandleAssist(AnyAssistStructure structure) {
+        if (structure == null) {
+            Toast.makeText(getContext(),
+                    "Please make sure you have enabled" +
+                            " \"Use text from screen\"" +
+                            " in Assist & voice input settings",
+                    Toast.LENGTH_SHORT).show();
+            hide();
+            return;
+        }
         getWindow().show();
 
         textExtractor = new TextExtractor(structure);
