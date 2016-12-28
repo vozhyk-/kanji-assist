@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 
 import re.neutrino.kanji_assist.dictionary.DictionaryParser;
@@ -31,7 +32,8 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         Log.d(debugName, "start");
         String text = strings[0];
         try {
-            url = new URL(baseApiUrl + text);
+            String query = URLEncoder.encode(text, "utf-8");
+            url = new URL(baseApiUrl + query);
             connection = (HttpURLConnection) url.openConnection();
             connection.connect();
 
