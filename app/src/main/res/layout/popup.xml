@@ -5,7 +5,9 @@
               android:background="@android:color/holo_orange_dark"
               android:fadingEdge="horizontal|vertical"
               android:orientation="vertical"
-              android:layout_width="match_parent">
+              android:layout_width="match_parent"
+              android:elevation="100dp">
+    <!-- ^^^ TODO Take maximum elevation of recreated text views instead -->
 
     <TextView
         android:text="textSelected"

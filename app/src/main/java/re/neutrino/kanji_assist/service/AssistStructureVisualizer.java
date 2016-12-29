@@ -1,10 +1,9 @@
 package re.neutrino.kanji_assist.service;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -19,6 +18,7 @@ import re.neutrino.kanji_assist.text_extractor.TextExtractor;
 
 class AssistStructureVisualizer {
     private final Dialog dialog;
+    private final Context context;
     private final DictionaryPopup dictionaryPopup;
 
     private final LayoutInflater inflater;
@@ -28,8 +28,9 @@ class AssistStructureVisualizer {
 
     private String TAG = getClass().getName();
 
-    public AssistStructureVisualizer(Dialog dialog, DictionaryPopup dictionaryPopup) {
+    public AssistStructureVisualizer(Dialog dialog, Context context, DictionaryPopup dictionaryPopup) {
         this.dialog = dialog;
+        this.context = context;
         this.dictionaryPopup = dictionaryPopup;
 
         inflater = dialog.getLayoutInflater();
@@ -59,7 +60,8 @@ class AssistStructureVisualizer {
         structureWalker.walkWindows(new AssistStructureWalker.Walker() {
             @Override
             public ScreenText run(AnyAssistStructure.ViewNode node, Rect position, int depth) {
-                if (node.getText() == null)
+                if (node.getText() == null ||
+                        node.getText().toString().isEmpty())
                     return null;
 
                 final TextView textView =
@@ -79,12 +81,11 @@ class AssistStructureVisualizer {
         final String offset = AssistStructureWalker.getLogOffset(depth);
 
         result.setText(node.getText());
-        Log.d(TAG, offset + node.getTextSize());
         result.setTypeface(result.getTypeface(), node.getTextStyle());
         // TODO Text {color, background color}
 
         result.setAlpha(node.getAlpha());
-        result.setElevation(node.getElevation());
+        result.setElevation(dpToPixels(depth));
         // TODO Transformation
 
         result.setOnClickListener(new OnClickListener(
@@ -97,6 +98,10 @@ class AssistStructureVisualizer {
         result.setLayoutParams(params);
 
         return result;
+    }
+
+    private float dpToPixels(float dp) {
+        return dp / context.getResources().getDisplayMetrics().density;
     }
 
     private class OnClickListener implements View.OnClickListener {

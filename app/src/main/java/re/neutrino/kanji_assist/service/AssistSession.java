@@ -26,7 +26,8 @@ class AssistSession extends VoiceInteractionSession {
         final View result = super.onCreateContentView();
 
         dictionaryPopup = new DictionaryPopup(getWindow(), getContext());
-        visualizer = new AssistStructureVisualizer(getWindow(), dictionaryPopup);
+        visualizer = new AssistStructureVisualizer(
+                getWindow(), getContext(), dictionaryPopup);
         return result;
     }
 
