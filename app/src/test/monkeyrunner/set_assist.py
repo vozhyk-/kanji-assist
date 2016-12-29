@@ -11,7 +11,7 @@ device = MonkeyRunner.waitForConnection()
 
 def press_button(button, how=MonkeyDevice.DOWN_AND_UP):
     device.press(button, how)
-    time.sleep(0.1)
+    time.sleep(0.3)
 
 
 # Assistant
