@@ -6,9 +6,12 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import re.neutrino.kanji_assist.dictionary.DictionaryParser;
@@ -16,8 +19,9 @@ import re.neutrino.kanji_assist.dictionary.DictionaryParser;
 import static java.lang.Math.min;
 
 class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
+    private final static  String providerURL = "jisho.org";
     private final static String baseApiUrl =
-            "http://jisho.org/api/v1/search/words?keyword=";
+            "http://" + providerURL + "/api/v1/search/words?keyword=";
     private final static String debugName = "backgroundTask";
     private HttpURLConnection connection;
     private URL url;
@@ -54,11 +58,18 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
                         + sense.getDefinitions().toString() + "\n";
             }
             return ret;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return "Error: unsupported encoding";
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return "Error: malformed URL";
+        } catch (UnknownHostException e) {
+            return "Error: Failed to reach " + providerURL;
         } catch (IOException e) {
             e.printStackTrace();
+            return "Error: Failed to fetch definitions";
         }
-        Log.d(debugName, "end");
-        return null;
     }
 
     @Override
