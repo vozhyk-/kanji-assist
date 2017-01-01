@@ -54,6 +54,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         try {
             String query = URLEncoder.encode(text, "utf-8");
             url = new URL(baseApiUrl + query);
+            Log.d(debugName, "URL: " + url);
             connection = (HttpURLConnection) url.openConnection();
             connection.connect();
 
