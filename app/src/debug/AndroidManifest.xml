@@ -21,6 +21,18 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application>
+
+        <activity
+            android:name=".AssistStructureVisualizerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_assist_structure_visualizer"
+            android:theme="@style/FullscreenTheme">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".TestExtractTextEditActivity"
             android:exported="true">
