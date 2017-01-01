@@ -6,7 +6,6 @@ import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiSelector;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,9 +17,8 @@ public class TextExtractorTest extends AssistTest {
         setThisAssistant();
     }
 
-    @Ignore
     @Test
-    public void testExtract_textEdit() throws Exception {
+    public void getSelectedText_textEdit() throws Exception {
         startActivityAsNewTask(new Intent(context,
                 TestExtractTextEditActivity.class));
 
@@ -33,10 +31,8 @@ public class TextExtractorTest extends AssistTest {
     }
 
     private void requestAssist() throws Exception {
-        longPressHome();
-    }
-
-    private void longPressHome() throws Exception {
-        Runtime.getRuntime().exec("su root input swipe 540 1860 540 1860 1000");
+        final UiObject callAssist = device.findObject(new UiSelector()
+                .resourceId("re.neutrino.kanji_assist:id/request_assist_button"));
+        callAssist.click();
     }
 }

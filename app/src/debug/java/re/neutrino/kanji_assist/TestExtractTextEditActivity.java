@@ -1,13 +1,18 @@
 package re.neutrino.kanji_assist;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 
-public class TestExtractTextEditActivity extends AppCompatActivity {
+public class TestExtractTextEditActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_extract_text_view);
+        setContentView(R.layout.activity_test_extract_text_edit);
+    }
+
+    public void requestAssist(View view) {
+        showAssist(null);
     }
 }
