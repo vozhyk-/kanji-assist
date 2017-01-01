@@ -1,3 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="" />
+  <settings default="Witaut&amp;Alex, 2016+, Apache2">
+    <module2copyright>
+      <element module="All" copyright="Witaut&amp;Alex, 2016+, Apache2" />
+    </module2copyright>
+  </settings>
 </component>
