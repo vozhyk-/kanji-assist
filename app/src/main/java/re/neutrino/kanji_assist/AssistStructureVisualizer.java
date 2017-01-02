@@ -17,8 +17,12 @@
 package re.neutrino.kanji_assist;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.BackgroundColorSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,7 +113,9 @@ public class AssistStructureVisualizer extends RelativeLayout {
         // TODO Text {color, background color}
 
         result.setAlpha(node.getAlpha());
+
         result.setElevation(dpToPixels(depth));
+        setTextBackground(result);
         // TODO Transformation
 
         result.setOnClickListener(new OnClickListener(
@@ -122,6 +128,17 @@ public class AssistStructureVisualizer extends RelativeLayout {
         result.setLayoutParams(params);
 
         return result;
+    }
+
+    private void setTextBackground(TextView textView) {
+        final SpannableString spannable =
+                new SpannableString(textView.getText());
+        final BackgroundColorSpan span = new BackgroundColorSpan(
+                Color.parseColor("#9bc6ff"));
+        spannable.setSpan(span, 0, spannable.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        textView.setText(spannable);
     }
 
     private float dpToPixels(float dp) {
