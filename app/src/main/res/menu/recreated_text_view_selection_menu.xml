@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2016-2017 Witaut Bajaryn, Aleksander Mistewicz
   ~
@@ -14,8 +15,9 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <string name="app_name">Kanji Assist</string>
-    <string name="please_enable_assistant">Please set the active assistant to Kanji Assist.</string>
-    <string name="show_dictionary_label">Show dictionary</string>
-</resources>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/show_dictionary"
+          android:title="@string/show_dictionary_label"/>
+</menu>

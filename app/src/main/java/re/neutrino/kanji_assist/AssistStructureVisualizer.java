@@ -24,7 +24,10 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.util.AttributeSet;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -121,6 +124,7 @@ public class AssistStructureVisualizer extends RelativeLayout {
 
         result.setOnClickListener(new OnClickListener(
                 new ScreenText(result.getText().toString(), position)));
+        result.setCustomSelectionActionModeCallback(new SelectionCallback(result));
 
         final RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(
@@ -156,6 +160,54 @@ public class AssistStructureVisualizer extends RelativeLayout {
         @Override
         public void onClick(View view) {
             showPopup(screenText);
+        }
+    }
+
+    private class SelectionCallback implements ActionMode.Callback {
+        private final TextView textView;
+
+        public SelectionCallback(TextView textView) {
+            this.textView = textView;
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(
+                    R.menu.recreated_text_view_selection_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // http://stackoverflow.com/a/27990050/795068
+            menu.removeItem(android.R.id.selectAll);
+            // Remove the "cut" option
+            menu.removeItem(android.R.id.cut);
+            // Remove the "copy all" option
+            menu.removeItem(android.R.id.copy);
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
+            if (menuItem.getItemId() != R.id.show_dictionary)
+                return false;
+
+            final int start = textView.getSelectionStart();
+            final int end = textView.getSelectionEnd();
+            final String selectedText = textView.getText()
+                    .subSequence(start, end)
+                    .toString();
+
+            final Rect rect = new Rect();
+            textView.getGlobalVisibleRect(rect);
+
+            showPopup(new ScreenText(selectedText, rect));
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
         }
     }
 }
