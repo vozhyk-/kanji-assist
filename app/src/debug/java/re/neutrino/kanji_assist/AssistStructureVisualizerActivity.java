@@ -19,6 +19,7 @@ package re.neutrino.kanji_assist;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -33,6 +34,8 @@ import re.neutrino.kanji_assist.service.AssistStructureVisualizer;
  * status bar and navigation/system bar) with user interaction.
  */
 public class AssistStructureVisualizerActivity extends AppCompatActivity {
+    public static final String STRUCTURE_KEY = "structure";
+    public static final String STRUCTURE_RES_KEY = "structure_res";
 
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -75,6 +78,7 @@ public class AssistStructureVisualizerActivity extends AppCompatActivity {
         }
     };
     private AssistStructureVisualizer visualizer;
+    private AssistStructureDebugUtil util;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +87,7 @@ public class AssistStructureVisualizerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_assist_structure_visualizer);
 
         contentView = findViewById(R.id.fullscreen_content);
+        util = new AssistStructureDebugUtil(this);
         visualizer = (AssistStructureVisualizer)
                 findViewById(R.id.visualizer_in_activity);
 
@@ -92,24 +97,40 @@ public class AssistStructureVisualizerActivity extends AppCompatActivity {
         }
     }
 
+    @Nullable
     private AnyAssistStructure getStructure() {
         final Bundle extras = getIntent().getExtras();
 
-        if (extras != null) {
-            final AnyAssistStructure structure = (AnyAssistStructure)
-                    extras.get("structure");
-            if (structure != null)
-                return structure;
+        if (extras == null) {
+            return getDefaultStructure();
         }
 
+        final AnyAssistStructure structure = (AnyAssistStructure)
+                extras.get(STRUCTURE_KEY);
+        if (structure != null) {
+            return structure;
+        }
+
+        final String structureResArg = extras.getString(STRUCTURE_RES_KEY);
+        final int structureRes = getResources().getIdentifier(
+                structureResArg, "raw", getPackageName());
+
+        return readStructure(structureRes);
+    }
+
+    @Nullable
+    private AnyAssistStructure getDefaultStructure() {
+        return readStructure(R.raw.settings_with_baselines);
+    }
+
+    @Nullable
+    private AnyAssistStructure readStructure(int res) {
         try {
-            return new AssistStructureDebugUtil(this).readAssistStructure(
-                    R.raw.settings_with_baselines);
+            return util.readAssistStructure(res);
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 
     @Override
