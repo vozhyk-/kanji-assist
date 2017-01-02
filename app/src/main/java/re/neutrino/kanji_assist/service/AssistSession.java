@@ -24,6 +24,7 @@ import android.service.voice.VoiceInteractionSession;
 import android.view.View;
 import android.widget.Toast;
 
+import re.neutrino.kanji_assist.AssistStructureDebugUtil;
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.assist_structure.RealAssistStructure;
 
@@ -60,7 +61,7 @@ class AssistSession extends VoiceInteractionSession {
         }
         getWindow().show();
 
-        new AssistStructureSaver().saveStructureForDebug(structure);
+        new AssistStructureDebugUtil(getContext()).saveStructureForDebug(structure);
 
         visualizer.show(structure);
     }

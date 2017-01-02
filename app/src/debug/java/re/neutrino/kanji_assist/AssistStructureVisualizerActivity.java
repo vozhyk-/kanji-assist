@@ -23,6 +23,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import java.io.IOException;
+
+import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
+import re.neutrino.kanji_assist.service.AssistStructureVisualizer;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
@@ -69,6 +74,7 @@ public class AssistStructureVisualizerActivity extends AppCompatActivity {
             hide();
         }
     };
+    private AssistStructureVisualizer visualizer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +83,33 @@ public class AssistStructureVisualizerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_assist_structure_visualizer);
 
         contentView = findViewById(R.id.fullscreen_content);
+        visualizer = (AssistStructureVisualizer)
+                findViewById(R.id.visualizer_in_activity);
+
+        final AnyAssistStructure structure = getStructure();
+        if (structure != null) {
+            visualizer.show(structure);
+        }
+    }
+
+    private AnyAssistStructure getStructure() {
+        final Bundle extras = getIntent().getExtras();
+
+        if (extras != null) {
+            final AnyAssistStructure structure = (AnyAssistStructure)
+                    extras.get("structure");
+            if (structure != null)
+                return structure;
+        }
+
+        try {
+            return new AssistStructureDebugUtil(this).readAssistStructure(
+                    R.raw.settings_with_baselines);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override

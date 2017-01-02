@@ -19,11 +19,16 @@ package re.neutrino.kanji_assist.assist_structure;
 import android.content.ComponentName;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import com.google.gson.Gson;
+
+import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class FakeAssistStructure implements AnyAssistStructure, Serializable {
+public class FakeAssistStructure implements AnyAssistStructure, Parcelable {
     private final ArrayList<WindowNode> windowNodes = new ArrayList<>();
     private final ComponentName activityComponent;
 
@@ -32,6 +37,41 @@ public class FakeAssistStructure implements AnyAssistStructure, Serializable {
             windowNodes.add(new WindowNode(structure.getWindowNodeAt(i)));
 
         activityComponent = structure.getActivityComponent();
+    }
+
+    public static final Creator<FakeAssistStructure> CREATOR =
+            new Creator<FakeAssistStructure>() {
+        @Override
+        public FakeAssistStructure createFromParcel(Parcel in) {
+            return fromJSON(in.readString());
+        }
+
+        @Override
+        public FakeAssistStructure[] newArray(int size) {
+            return new FakeAssistStructure[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(toJSON());
+    }
+
+    public String toJSON() {
+        return new Gson().toJson(this);
+    }
+
+    public static FakeAssistStructure fromJSON(String json) {
+        return new Gson().fromJson(json, FakeAssistStructure.class);
+    }
+
+    public static FakeAssistStructure fromJSON(Reader reader) {
+        return new Gson().fromJson(reader, FakeAssistStructure.class);
     }
 
     @Override

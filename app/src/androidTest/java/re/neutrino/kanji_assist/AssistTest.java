@@ -39,11 +39,6 @@ class AssistTest extends BasicTest {
         startActivityAsNewTask(new Intent(Settings.ACTION_VOICE_INPUT_SETTINGS));
     }
 
-    protected void startActivityAsNewTask(Intent intent) {
-        globalContext.startActivity(
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-    }
-
     // Assist Settings must be opened to call this
     protected void setAssistantOnly(String assistant) throws UiObjectNotFoundException {
         // TODO Disable animations in code

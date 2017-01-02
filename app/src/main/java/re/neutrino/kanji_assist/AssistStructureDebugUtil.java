@@ -14,28 +14,40 @@
  * limitations under the License.
  */
 
-package re.neutrino.kanji_assist.service;
+package re.neutrino.kanji_assist;
 
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
-
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import re.neutrino.kanji_assist.BuildConfig;
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.assist_structure.FakeAssistStructure;
 
-class AssistStructureSaver {
-    public AssistStructureSaver() {
+public class AssistStructureDebugUtil {
+    private Context context;
+
+    public AssistStructureDebugUtil(Context context) {
+        this.context = context;
     }
 
-    void saveStructureForDebug(AnyAssistStructure structure) {
+    public FakeAssistStructure readAssistStructure(int res) throws IOException {
+        try (InputStream input = context.getResources()
+                .openRawResource(res)) {
+            try (InputStreamReader reader = new InputStreamReader(input)) {
+                return FakeAssistStructure.fromJSON(reader);
+            }
+        }
+    }
+
+    public void saveStructureForDebug(AnyAssistStructure structure) {
         if (!BuildConfig.DEBUG)
             return;
 
@@ -56,7 +68,7 @@ class AssistStructureSaver {
 
         try (FileOutputStream output = new FileOutputStream(file)) {
             try (OutputStreamWriter writer = new OutputStreamWriter(output)) {
-                writer.write(new Gson().toJson(fakeStructure));
+                writer.write(fakeStructure.toJSON());
             }
         } catch (IOException e) {
             e.printStackTrace();

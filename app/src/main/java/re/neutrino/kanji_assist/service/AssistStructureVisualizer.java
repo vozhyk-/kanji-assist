@@ -19,6 +19,7 @@ package re.neutrino.kanji_assist.service;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -31,7 +32,7 @@ import re.neutrino.kanji_assist.text_extractor.AssistStructureWalker;
 import re.neutrino.kanji_assist.text_extractor.ScreenText;
 import re.neutrino.kanji_assist.text_extractor.TextExtractor;
 
-class AssistStructureVisualizer extends RelativeLayout {
+public class AssistStructureVisualizer extends RelativeLayout {
     private final DictionaryPopup dictionaryPopup;
 
     private final LayoutInflater inflater;
@@ -40,14 +41,18 @@ class AssistStructureVisualizer extends RelativeLayout {
 
     private String TAG = getClass().getName();
 
-    public AssistStructureVisualizer(Context context) {
-        super(context);
+    public AssistStructureVisualizer(Context context, AttributeSet attrs) {
+        super(context, attrs);
 
         inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.visualizer, this);
 
         dictionaryPopup = (DictionaryPopup)
                 findViewById(R.id.visualizer_dictionary_popup);
+    }
+
+    public AssistStructureVisualizer(Context context) {
+        this(context, null);
     }
 
     public void show(AnyAssistStructure structure) {

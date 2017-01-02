@@ -18,6 +18,7 @@ package re.neutrino.kanji_assist;
 
 import android.app.Instrumentation;
 import android.content.Context;
+import android.content.Intent;
 import android.support.test.uiautomator.UiDevice;
 
 import org.junit.Before;
@@ -40,5 +41,10 @@ public class BasicTest {
         device = UiDevice.getInstance(instr);
 
         appName = context.getString(R.string.app_name);
+    }
+
+    protected void startActivityAsNewTask(Intent intent) {
+        globalContext.startActivity(
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 }
