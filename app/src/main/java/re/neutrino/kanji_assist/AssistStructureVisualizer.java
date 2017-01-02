@@ -61,6 +61,7 @@ public class AssistStructureVisualizer extends RelativeLayout {
         textExtractor = new TextExtractor(structure);
         showPopupForSelectedText();
 
+        removeAllViews();
         recreateTextViews(structure);
     }
 
