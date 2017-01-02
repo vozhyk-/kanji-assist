@@ -52,6 +52,11 @@ public class AssistStructureWalker {
             return found;
 
         for (int i = 0; i < node.getChildCount(); i++) {
+            rect.set(
+                    rect.left - node.getScrollX(),
+                    rect.top - node.getScrollY(),
+                    rect.right, rect.bottom);
+
             found = walkViews(node.getChildAt(i), rect, walker, depth + 1);
             if (found != null)
                 return found;
