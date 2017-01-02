@@ -16,7 +16,6 @@
 
 package re.neutrino.kanji_assist.service;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
@@ -32,30 +31,26 @@ import re.neutrino.kanji_assist.text_extractor.AssistStructureWalker;
 import re.neutrino.kanji_assist.text_extractor.ScreenText;
 import re.neutrino.kanji_assist.text_extractor.TextExtractor;
 
-class AssistStructureVisualizer {
-    private final Dialog dialog;
-    private final Context context;
+class AssistStructureVisualizer extends RelativeLayout {
     private final DictionaryPopup dictionaryPopup;
 
     private final LayoutInflater inflater;
-    private RelativeLayout layout;
 
     private TextExtractor textExtractor;
 
     private String TAG = getClass().getName();
 
-    public AssistStructureVisualizer(Dialog dialog, Context context, DictionaryPopup dictionaryPopup) {
-        this.dialog = dialog;
-        this.context = context;
-        this.dictionaryPopup = dictionaryPopup;
+    public AssistStructureVisualizer(Context context) {
+        super(context);
 
-        inflater = dialog.getLayoutInflater();
+        inflater = LayoutInflater.from(context);
+        inflater.inflate(R.layout.visualizer, this);
+
+        dictionaryPopup = (DictionaryPopup)
+                findViewById(R.id.visualizer_dictionary_popup);
     }
 
     public void show(AnyAssistStructure structure) {
-        layout = (RelativeLayout) inflater.inflate(R.layout.visualizer, null);
-        dialog.setContentView(layout);
-
         textExtractor = new TextExtractor(structure);
         showPopupForSelectedText();
 
@@ -65,8 +60,12 @@ class AssistStructureVisualizer {
     private void showPopupForSelectedText() {
         ScreenText selected = textExtractor.getSelectedText();
         if (selected != null) {
-            dictionaryPopup.show(selected, layout);
+            showPopup(selected);
         }
+    }
+
+    private void showPopup(ScreenText text) {
+        dictionaryPopup.show(text);
     }
 
     private void recreateTextViews(AnyAssistStructure structure) {
@@ -81,8 +80,8 @@ class AssistStructureVisualizer {
                     return null;
 
                 final TextView textView =
-                        recreateTextView(node, position, depth, layout);
-                layout.addView(textView);
+                        recreateTextView(node, position, depth);
+                addView(textView);
                 return null;
             }
         });
@@ -90,9 +89,9 @@ class AssistStructureVisualizer {
 
     @NonNull
     private TextView recreateTextView(AnyAssistStructure.ViewNode node,
-                                      Rect position, int depth, RelativeLayout layout) {
+                                      Rect position, int depth) {
         final TextView result = (TextView)
-                inflater.inflate(R.layout.recreated_textview, layout, false);
+                inflater.inflate(R.layout.recreated_textview, this, false);
 
         final String offset = AssistStructureWalker.getLogOffset(depth);
 
@@ -117,7 +116,7 @@ class AssistStructureVisualizer {
     }
 
     private float dpToPixels(float dp) {
-        return dp / context.getResources().getDisplayMetrics().density;
+        return dp / getContext().getResources().getDisplayMetrics().density;
     }
 
     private class OnClickListener implements View.OnClickListener {
@@ -129,7 +128,7 @@ class AssistStructureVisualizer {
 
         @Override
         public void onClick(View view) {
-            dictionaryPopup.show(screenText, layout);
+            showPopup(screenText);
         }
     }
 }

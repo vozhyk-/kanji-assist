@@ -19,4 +19,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+    <re.neutrino.kanji_assist.dictionary_popup.DictionaryPopup
+        android:id="@+id/visualizer_dictionary_popup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
 </RelativeLayout>

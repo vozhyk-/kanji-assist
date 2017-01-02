@@ -26,12 +26,10 @@ import android.widget.Toast;
 
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.assist_structure.RealAssistStructure;
-import re.neutrino.kanji_assist.dictionary_popup.DictionaryPopup;
 
 class AssistSession extends VoiceInteractionSession {
 
     private AssistStructureVisualizer visualizer;
-    private DictionaryPopup dictionaryPopup;
 
     AssistSession(Context context) {
         super(context);
@@ -39,12 +37,8 @@ class AssistSession extends VoiceInteractionSession {
 
     @Override
     public View onCreateContentView() {
-        final View result = super.onCreateContentView();
-
-        dictionaryPopup = new DictionaryPopup(getWindow(), getContext());
-        visualizer = new AssistStructureVisualizer(
-                getWindow(), getContext(), dictionaryPopup);
-        return result;
+        visualizer = new AssistStructureVisualizer(getWindow().getContext());
+        return visualizer;
     }
 
     @Override
