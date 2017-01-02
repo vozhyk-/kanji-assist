@@ -31,8 +31,8 @@ public class AssistStructureWalker {
 
     @Nullable
     private static ScreenText walkViews(
-            AnyAssistStructure.ViewNode node, Walker walker) {
-        return walkViews(node, new Rect(0, 0, 0, 0), walker, 0);
+            AnyAssistStructure.ViewNode node, Rect rect, Walker walker) {
+        return walkViews(node, rect, walker, 0);
     }
 
     @Nullable
@@ -71,7 +71,14 @@ public class AssistStructureWalker {
     public ScreenText walkWindows(Walker walker) {
         for (int i = 0; i < structure.getWindowNodeCount(); i++) {
             final AnyAssistStructure.WindowNode win = structure.getWindowNodeAt(i);
-            final ScreenText found = walkViews(win.getRootViewNode(), walker);
+
+            final int left = win.getLeft();
+            final int top = win.getTop();
+            final Rect rect = new Rect(left, top,
+                    left + win.getWidth(), top + win.getHeight());
+
+            final ScreenText found = walkViews(
+                    win.getRootViewNode(), rect, walker);
             if (found != null) {
                 return found;
             }

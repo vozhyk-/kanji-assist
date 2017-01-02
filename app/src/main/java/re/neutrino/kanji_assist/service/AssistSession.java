@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import re.neutrino.kanji_assist.AssistStructureDebugUtil;
+import re.neutrino.kanji_assist.AssistStructureVisualizer;
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.assist_structure.RealAssistStructure;
 

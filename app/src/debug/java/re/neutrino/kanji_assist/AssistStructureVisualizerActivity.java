@@ -27,7 +27,6 @@ import android.view.View;
 import java.io.IOException;
 
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
-import re.neutrino.kanji_assist.service.AssistStructureVisualizer;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.

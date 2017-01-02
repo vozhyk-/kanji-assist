@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package re.neutrino.kanji_assist.service;
+package re.neutrino.kanji_assist;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -25,7 +25,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import re.neutrino.kanji_assist.R;
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.dictionary_popup.DictionaryPopup;
 import re.neutrino.kanji_assist.text_extractor.AssistStructureWalker;
@@ -33,7 +32,7 @@ import re.neutrino.kanji_assist.text_extractor.ScreenText;
 import re.neutrino.kanji_assist.text_extractor.TextExtractor;
 
 public class AssistStructureVisualizer extends RelativeLayout {
-    private final DictionaryPopup dictionaryPopup;
+    private DictionaryPopup dictionaryPopup;
 
     private final LayoutInflater inflater;
 
@@ -47,8 +46,7 @@ public class AssistStructureVisualizer extends RelativeLayout {
         inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.visualizer, this);
 
-        dictionaryPopup = (DictionaryPopup)
-                findViewById(R.id.visualizer_dictionary_popup);
+        dictionaryPopup = new DictionaryPopup(getContext());
     }
 
     public AssistStructureVisualizer(Context context) {
@@ -70,6 +68,12 @@ public class AssistStructureVisualizer extends RelativeLayout {
     }
 
     private void showPopup(ScreenText text) {
+        removeView(dictionaryPopup);
+
+        // TODO Use max elevation of text views
+        dictionaryPopup.setElevation(1000);
+        addView(dictionaryPopup);
+
         dictionaryPopup.show(text);
     }
 

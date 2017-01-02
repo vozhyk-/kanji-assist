@@ -50,6 +50,10 @@ public class DictionaryPopup extends GridLayout {
         this.dictionary = new Dictionary();
     }
 
+    public DictionaryPopup(Context context) {
+        this(context, null);
+    }
+
     public void show(ScreenText screenText) {
 
         close();
