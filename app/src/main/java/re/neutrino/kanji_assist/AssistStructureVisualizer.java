@@ -205,6 +205,7 @@ public class AssistStructureVisualizer extends RelativeLayout {
             textView.getGlobalVisibleRect(rect);
 
             showPopup(new ScreenText(selectedText, rect));
+            mode.finish();
             return true;
         }
 
