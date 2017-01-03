@@ -66,13 +66,31 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
                     dictionaryParser.getExamples();
             List<DictionaryParser.Sense> topSenses =
                     dictionaryParser.getSenses();
+            int list_size = min(topExamples.size(), topSenses.size());
+            if (list_size == 0)
+                return "No definitions found";
             String ret = "";
-            for (int i = 0; i < min(topExamples.size(), topSenses.size()); i++) {
+            for (int i = 0; i < list_size; i++) {
                 DictionaryParser.Example example = topExamples.get(i);
                 DictionaryParser.Sense sense = topSenses.get(i);
-                ret += example.getWord() +
-                        " [" + example.getReading() + "] "
-                        + sense.getDefinitions().toString() + "\n";
+                if (example.getWord() == null) {
+                    Log.w(debugName, "word is null, skip");
+                    continue;
+                }
+                if (sense.getDefinitions() == null) {
+                    Log.w(debugName, "definitions is null, skip");
+                    continue;
+                }
+                if (example.getReading() == null) {
+                    Log.w(debugName, "reading is null, do not skip");
+                    ret += example.getWord() +
+                            " [] "
+                            + sense.getDefinitions().toString() + "\n";
+                } else {
+                    ret += example.getWord() +
+                            " [" + example.getReading() + "] "
+                            + sense.getDefinitions().toString() + "\n";
+                }
             }
             return ret;
         } catch (UnsupportedEncodingException e) {
