@@ -184,10 +184,9 @@ public class AssistStructureVisualizer extends RelativeLayout {
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             // http://stackoverflow.com/a/27990050/795068
             menu.removeItem(android.R.id.selectAll);
-            // Remove the "cut" option
             menu.removeItem(android.R.id.cut);
-            // Remove the "copy all" option
             menu.removeItem(android.R.id.copy);
+            menu.removeItem(android.R.id.shareText);
             return true;
         }
 
