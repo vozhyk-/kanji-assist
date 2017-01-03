@@ -67,4 +67,9 @@ class AssistSession extends VoiceInteractionSession {
         visualizer.show(structure);
     }
 
+    @Override
+    public void onHide() {
+        visualizer.clear();
+    }
+
 }
