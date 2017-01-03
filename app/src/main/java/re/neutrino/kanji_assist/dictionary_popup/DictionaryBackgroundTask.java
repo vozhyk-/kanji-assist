@@ -47,21 +47,26 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         this.textView = textView;
     }
 
+    private DictionaryParser fetch(String text) throws IOException {
+        String query = URLEncoder.encode(text, "utf-8");
+        url = new URL(baseApiUrl + query);
+        Log.d(debugName, "URL: " + url);
+        connection = (HttpURLConnection) url.openConnection();
+        connection.connect();
+
+        InputStream inputStream = connection.getInputStream();
+        DictionaryParser dictionaryParser = new DictionaryParser(inputStream);
+        dictionaryParser.read();
+        connection.disconnect();
+        return dictionaryParser;
+    }
+
     @Override
     protected String doInBackground(String... strings) {
         Log.d(debugName, "start");
         String text = strings[0];
         try {
-            String query = URLEncoder.encode(text, "utf-8");
-            url = new URL(baseApiUrl + query);
-            Log.d(debugName, "URL: " + url);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.connect();
-
-            InputStream inputStream = connection.getInputStream();
-            DictionaryParser dictionaryParser = new DictionaryParser(inputStream);
-            dictionaryParser.read();
-            connection.disconnect();
+            DictionaryParser dictionaryParser = fetch(text);
             List<DictionaryParser.Example> topExamples =
                     dictionaryParser.getExamples();
             List<DictionaryParser.Sense> topSenses =
