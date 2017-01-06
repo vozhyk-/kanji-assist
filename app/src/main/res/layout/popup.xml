@@ -43,12 +43,5 @@
         android:layout_width="match_parent"
         android:layout_height="128dp"
         android:layout_row="1"
-        >
-    <TextView
-        android:text="textDictionary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textDictionary"
-        android:visibility="invisible" />
-    </ScrollView>
+        android:id="@+id/scrollView" />
 </GridLayout>
