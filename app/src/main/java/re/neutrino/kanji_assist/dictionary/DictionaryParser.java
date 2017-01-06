@@ -28,8 +28,9 @@ import java.util.ArrayList;
 public class DictionaryParser {
     private final static String debugName = "dictionaryParser";
     private JsonReader reader;
-    private ArrayList<Example> examples = new ArrayList<>();
-    private ArrayList<Sense> senses = new ArrayList<>();
+    private ArrayList<Entry> entries = new ArrayList<>();
+
+    public ArrayList<Entry> getEntries() { return entries; }
 
     public DictionaryParser(InputStream inputStream) throws UnsupportedEncodingException {
         reader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -49,18 +50,7 @@ public class DictionaryParser {
             if (name.equals("data")) {
                 reader.beginArray();
                 while (reader.hasNext()) {
-                    reader.beginObject();
-                    while (reader.hasNext()) {
-                        String inside_name = reader.nextName();
-                        if (inside_name.equals("japanese")) {
-                            readExamples();
-                        } else if (inside_name.equals("senses")) {
-                            readSenses();
-                        } else {
-                            reader.skipValue();
-                        }
-                    }
-                    reader.endObject();
+                    entries.add(readEntry());
                 }
                 reader.endArray();
             } else {
@@ -70,12 +60,30 @@ public class DictionaryParser {
         reader.endObject();
     }
 
-    public ArrayList<Example> getExamples() {
-        return examples;
+    public class Entry {
+        public ArrayList<Example> examples = new ArrayList<>();
+        public ArrayList<Sense> senses = new ArrayList<>();
     }
 
-    public ArrayList<Sense> getSenses() {
-        return senses;
+    private Entry readEntry() throws IOException {
+        Entry entry = new Entry();
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String inside_name = reader.nextName();
+            if (inside_name.equals("japanese")) {
+                readExamples(entry);
+            } else if (inside_name.equals("senses")) {
+                readSenses(entry);
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        if (entry.examples.size() != entry.senses.size())
+            Log.w(debugName, "size mismatch: "
+                    + entry.examples.size() + " vs. " + entry.senses.size());
+        return entry;
     }
 
     public class Sense {
@@ -90,10 +98,10 @@ public class DictionaryParser {
         }
     }
 
-    private void readSenses() throws  IOException {
+    private void readSenses(Entry entry) throws  IOException {
         reader.beginArray();
         while (reader.hasNext()) {
-            getSenses().add(readSense());
+            entry.senses.add(readSense());
         }
         reader.endArray();
     }
@@ -134,10 +142,10 @@ public class DictionaryParser {
         }
     }
 
-    private void readExamples() throws IOException {
+    private void readExamples(Entry entry) throws IOException {
         reader.beginArray();
         while (reader.hasNext()) {
-            getExamples().add(readExample());
+            entry.examples.add(readExample());
         }
         reader.endArray();
     }

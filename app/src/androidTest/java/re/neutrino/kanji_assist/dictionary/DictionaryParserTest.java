@@ -24,6 +24,7 @@ import re.neutrino.kanji_assist.BasicTest;
 import re.neutrino.kanji_assist.R;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -34,13 +35,13 @@ public class DictionaryParserTest extends BasicTest {
         try (InputStream input = openResource(R.raw.dictionaryparse_1)) {
             DictionaryParser parser = new DictionaryParser(input);
             parser.read();
-            assertTrue("Examples size mismatch",
-                    parser.getExamples().size() == 21);
-            assertTrue("Senses size mismatch",
-                    parser.getSenses().size() == 18);
+            assertTrue("Entries size mismatch",
+                    parser.getEntries().size() == 10);
         }
     }
 
+    // The parser is correct in returning nulls.
+    // It's the UI that shouldn't show nulls to the user.
     @Test
     public void read_nullWords() throws Exception {
         try (InputStream input = openResource(
@@ -48,7 +49,10 @@ public class DictionaryParserTest extends BasicTest {
             final DictionaryParser parser = new DictionaryParser(input);
             parser.read();
 
-            assertThat(parser.getExamples().get(0).getWord(), notNullValue());
+            assertThat(parser.getEntries().get(3).examples.get(0).getWord(),
+                    nullValue());
+            assertThat(parser.getEntries().get(0).examples.get(0).getWord(),
+                    nullValue());
         }
     }
 
@@ -62,7 +66,10 @@ public class DictionaryParserTest extends BasicTest {
             final DictionaryParser parser = new DictionaryParser(input);
             parser.read();
 
-            assertThat(parser.getExamples().get(2).getReading(), notNullValue());
+            assertThat(parser.getEntries().get(0).examples.get(0).getReading(),
+                    notNullValue());
+            assertThat(parser.getEntries().get(2).examples.get(0).getReading(),
+                    nullValue());
         }
     }
 
