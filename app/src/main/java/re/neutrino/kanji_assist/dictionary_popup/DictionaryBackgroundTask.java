@@ -18,10 +18,13 @@ package re.neutrino.kanji_assist.dictionary_popup;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -48,11 +51,22 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
     private ScrollView scrollView;
     private Context context;
     private ArrayList<String> showEntries = new ArrayList<>();
+    final RelativeLayout.LayoutParams matchParentLayout =
+            new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT);
+    final RelativeLayout.LayoutParams elementLayout =
+            new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
 
     DictionaryBackgroundTask(DictionaryPopup dictionaryPopup) {
         this.context = dictionaryPopup.getContext();
         this.scrollView = (ScrollView) dictionaryPopup.findViewById(R.id.scrollView);
         this.scrollView.removeAllViews();
+        ProgressBar progress = new ProgressBar(this.context);
+        progress.setLayoutParams(matchParentLayout);
+        this.scrollView.addView(progress);
     }
 
     private DictionaryParser fetch(String text) throws IOException {
@@ -110,11 +124,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
 
     private void addTextView(LinearLayout linearLayout, String i) {
         TextView textView = new TextView(context);
-        final RelativeLayout.LayoutParams params =
-                new RelativeLayout.LayoutParams(
-                        RelativeLayout.LayoutParams.MATCH_PARENT,
-                        RelativeLayout.LayoutParams.WRAP_CONTENT);
-        textView.setLayoutParams(params);
+        textView.setLayoutParams(elementLayout);
         textView.setText(i);
         linearLayout.addView(textView);
     }
@@ -134,8 +144,11 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             for (String i : showEntries) {
                 addTextView(linearLayout, i);
             }
+            scrollView.removeAllViews();
             scrollView.addView(linearLayout);
-        } else
+        } else {
+            scrollView.removeAllViews();
             addTextView(result);
+        }
     }
 }
