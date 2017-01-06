@@ -67,17 +67,16 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         String text = strings[0];
         try {
             DictionaryParser dictionaryParser = fetch(text);
-            List<DictionaryParser.Example> topExamples =
-                    dictionaryParser.getExamples();
-            List<DictionaryParser.Sense> topSenses =
-                    dictionaryParser.getSenses();
-            int list_size = min(topExamples.size(), topSenses.size());
-            if (list_size == 0)
+            List<DictionaryParser.Entry> entries =
+                    dictionaryParser.getEntries();
+            if (entries.size() == 0)
                 return "No definitions found";
             String ret = "";
-            for (int i = 0; i < list_size; i++) {
-                DictionaryParser.Example example = topExamples.get(i);
-                DictionaryParser.Sense sense = topSenses.get(i);
+            for (int i = 0; i < entries.size(); i++) {
+                DictionaryParser.Entry entry = entries.get(i);
+                // FIXME: display all senses and examples from entry
+                DictionaryParser.Example example = entry.examples.get(0);
+                DictionaryParser.Sense sense = entry.senses.get(0);
                 if (example.getWord() == null) {
                     Log.w(debugName, "word is null, skip");
                     continue;
