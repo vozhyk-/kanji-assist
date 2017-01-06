@@ -17,8 +17,10 @@
 package re.neutrino.kanji_assist.dictionary_popup;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -59,6 +61,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
+    private ColorRotator colorRotator;
 
     DictionaryBackgroundTask(DictionaryPopup dictionaryPopup) {
         this.context = dictionaryPopup.getContext();
@@ -67,6 +70,20 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         ProgressBar progress = new ProgressBar(this.context);
         progress.setLayoutParams(matchParentLayout);
         this.scrollView.addView(progress);
+        this.colorRotator = new ColorRotator();
+    }
+
+    private class ColorRotator {
+        private int colors[] = {
+                ContextCompat.getColor(context, R.color.colorAlternate1),
+                ContextCompat.getColor(context, R.color.colorAlternate2)};
+        private int index = 0;
+        private int size = 2;
+
+        private int getNextColor() {
+            index = (index+1) % size;
+            return colors[index];
+        }
     }
 
     private DictionaryParser fetch(String text) throws IOException {
@@ -126,6 +143,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         TextView textView = new TextView(context);
         textView.setLayoutParams(elementLayout);
         textView.setText(i);
+        textView.setBackgroundColor(colorRotator.getNextColor());
         linearLayout.addView(textView);
     }
 
