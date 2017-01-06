@@ -16,8 +16,12 @@
 
 package re.neutrino.kanji_assist.dictionary_popup;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -28,11 +32,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
+import re.neutrino.kanji_assist.R;
 import re.neutrino.kanji_assist.dictionary.DictionaryParser;
-
-import static java.lang.Math.min;
 
 class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
     private final static  String providerURL = "jisho.org";
@@ -41,10 +45,14 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
     private final static String debugName = "backgroundTask";
     private HttpURLConnection connection;
     private URL url;
-    private TextView textView;
+    private ScrollView scrollView;
+    private Context context;
+    private ArrayList<String> showEntries = new ArrayList<>();
 
-    DictionaryBackgroundTask(TextView textView) {
-        this.textView = textView;
+    DictionaryBackgroundTask(DictionaryPopup dictionaryPopup) {
+        this.context = dictionaryPopup.getContext();
+        this.scrollView = (ScrollView) dictionaryPopup.findViewById(R.id.scrollView);
+        this.scrollView.removeAllViews();
     }
 
     private DictionaryParser fetch(String text) throws IOException {
@@ -71,32 +79,21 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
                     dictionaryParser.getEntries();
             if (entries.size() == 0)
                 return "No definitions found";
-            String ret = "";
             for (int i = 0; i < entries.size(); i++) {
                 DictionaryParser.Entry entry = entries.get(i);
-                // FIXME: display all senses and examples from entry
-                DictionaryParser.Example example = entry.examples.get(0);
-                DictionaryParser.Sense sense = entry.senses.get(0);
-                if (example.getWord() == null) {
-                    Log.w(debugName, "word is null, skip");
+                ArrayList<DictionaryParser.Example> examples = entry.examples;
+                ArrayList<DictionaryParser.Sense> senses = entry.senses;
+                if (examples.size() == 0) {
+                    Log.w(debugName, "no words found, skip");
                     continue;
                 }
-                if (sense.getDefinitions() == null) {
-                    Log.w(debugName, "definitions is null, skip");
+                if (senses.size() == 0) {
+                    Log.w(debugName, "no definitions found, skip");
                     continue;
                 }
-                if (example.getReading() == null) {
-                    Log.w(debugName, "reading is null, do not skip");
-                    ret += example.getWord() +
-                            " [] "
-                            + sense.getDefinitions().toString() + "\n";
-                } else {
-                    ret += example.getWord() +
-                            " [" + example.getReading() + "] "
-                            + sense.getDefinitions().toString() + "\n";
-                }
+                showEntries.add(examples.toString() + ": " + senses.toString());
             }
-            return ret;
+            return null;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return "Error: unsupported encoding";
@@ -111,8 +108,34 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         }
     }
 
+    private void addTextView(LinearLayout linearLayout, String i) {
+        TextView textView = new TextView(context);
+        final RelativeLayout.LayoutParams params =
+                new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.MATCH_PARENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+        textView.setLayoutParams(params);
+        textView.setText(i);
+        linearLayout.addView(textView);
+    }
+
+    private void addTextView(String i) {
+        TextView textView = new TextView(context);
+        textView.setText(i);
+        scrollView.addView(textView);
+    }
+
     @Override
     protected void onPostExecute(String result) {
-        textView.setText(result);
+        if (result == null) {
+            Log.d(debugName, showEntries.toString());
+            LinearLayout linearLayout = new LinearLayout(context);
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            for (String i : showEntries) {
+                addTextView(linearLayout, i);
+            }
+            scrollView.addView(linearLayout);
+        } else
+            addTextView(result);
     }
 }

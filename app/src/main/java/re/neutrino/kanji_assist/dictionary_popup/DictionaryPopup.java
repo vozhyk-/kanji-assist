@@ -76,8 +76,7 @@ public class DictionaryPopup extends GridLayout {
         TextView textSelected = (TextView) findViewById(R.id.textSelected);
         textSelected.setText(screenText.getText());
 
-        TextView textDictionary = (TextView) findViewById(R.id.textDictionary);
-        dictionary.get_definition(screenText.getText(), textDictionary);
+        dictionary.get_definition(this, screenText.getText());
 
         Button button = (Button) findViewById(R.id.buttonClose);
         button.setOnClickListener(new View.OnClickListener() {
