@@ -39,22 +39,24 @@ public class DictionaryDbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_DEF2EX_TABLE =
             "CREATE TABLE " + DictionaryDbContract.Definition2Example.TABLE_NAME + " (" +
+                    DictionaryDbContract.Definition2Example._ID + " INTEGER PRIMARY KEY," +
                     DictionaryDbContract.Definition2Example.COLUMN_NAME_EXAMPLE_KEY + " INTEGER," +
+                    DictionaryDbContract.Definition2Example.COLUMN_NAME_DEFINITION_KEY + " INTEGER," +
                     "FOREIGN KEY(" + DictionaryDbContract.Definition2Example.COLUMN_NAME_EXAMPLE_KEY + ") " +
                     "REFERENCES " + DictionaryDbContract.InputKanjiEntry.TABLE_NAME +
                     "(" + DictionaryDbContract.InputKanjiEntry._ID + ")," +
-                    DictionaryDbContract.Definition2Example.COLUMN_NAME_EXAMPLE_KEY + " INTEGER," +
                     "FOREIGN KEY(" + DictionaryDbContract.Definition2Example.COLUMN_NAME_DEFINITION_KEY + ") " +
                     "REFERENCES " + DictionaryDbContract.DefinitionEntry.TABLE_NAME +
                     "(" + DictionaryDbContract.DefinitionEntry._ID + "))";
 
     private static final String SQL_CREATE_KANJI2EX_TABLE =
             "CREATE TABLE " + DictionaryDbContract.Kanji2Example.TABLE_NAME + " (" +
+                    DictionaryDbContract.Kanji2Example._ID + " INTEGER PRIMARY KEY," +
                     DictionaryDbContract.Kanji2Example.COLUMN_NAME_KANJI_KEY + " INTEGER," +
+                    DictionaryDbContract.Kanji2Example.COLUMN_NAME_EXAMPLE_KEY + " INTEGER," +
                     "FOREIGN KEY(" + DictionaryDbContract.Kanji2Example.COLUMN_NAME_KANJI_KEY + ") " +
                     "REFERENCES " + DictionaryDbContract.InputKanjiEntry.TABLE_NAME +
                     "(" + DictionaryDbContract.InputKanjiEntry._ID + ")," +
-                    DictionaryDbContract.Kanji2Example.COLUMN_NAME_EXAMPLE_KEY + " INTEGER," +
                     "FOREIGN KEY(" + DictionaryDbContract.Kanji2Example.COLUMN_NAME_EXAMPLE_KEY + ") " +
                     "REFERENCES " + DictionaryDbContract.DefinitionEntry.TABLE_NAME +
                     "(" + DictionaryDbContract.DefinitionEntry._ID + "))";
@@ -79,7 +81,8 @@ public class DictionaryDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "KanjiAssistDefinitionCache.db";
 
     public DictionaryDbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        //FIXME do not use in-memory db, but file (DATABASE_NAME)
+        super(context, null, null, DATABASE_VERSION);
     }
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_DEFINITION_TABLE);
