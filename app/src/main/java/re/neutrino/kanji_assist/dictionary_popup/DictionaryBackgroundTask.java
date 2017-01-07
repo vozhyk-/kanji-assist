@@ -17,16 +17,14 @@
 package re.neutrino.kanji_assist.dictionary_popup;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -52,15 +50,11 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
     private URL url;
     private ScrollView scrollView;
     private Context context;
-    private ArrayList<String> showEntries = new ArrayList<>();
+    private ArrayList<DictionaryParser.Entry> showEntries = new ArrayList<>();
     final RelativeLayout.LayoutParams matchParentLayout =
             new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.MATCH_PARENT);
-    final RelativeLayout.LayoutParams elementLayout =
-            new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT);
     private ColorRotator colorRotator;
 
     DictionaryBackgroundTask(DictionaryPopup dictionaryPopup) {
@@ -122,7 +116,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
                     Log.w(debugName, "no definitions found, skip");
                     continue;
                 }
-                showEntries.add(examples.toString() + ": " + senses.toString());
+                showEntries.add(entry);
             }
             return null;
         } catch (UnsupportedEncodingException e) {
@@ -139,12 +133,37 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         }
     }
 
-    private void addTextView(LinearLayout linearLayout, String i) {
-        TextView textView = new TextView(context);
-        textView.setLayoutParams(elementLayout);
-        textView.setText(i);
-        textView.setBackgroundColor(colorRotator.getNextColor());
-        linearLayout.addView(textView);
+    private void addTextView(LinearLayout linearLayout, DictionaryParser.Entry i) {
+        LinearLayout definitionLayout =
+                (LinearLayout) View.inflate(context, R.layout.definition, null);
+        TextView word = (TextView) definitionLayout.findViewById(R.id.word);
+        TextView spelling = (TextView) definitionLayout.findViewById(R.id.spelling);
+        String word_text = "";
+        String spelling_text = "";
+        for (DictionaryParser.Example j:i.examples) {
+            if (j.getWord() == null) {
+                Log.d(debugName, "null word, skipping");
+            } else {
+                word_text += j.getWord() + "\n";
+            }
+            if (j.getReading() == null) {
+                Log.d(debugName, "null reading, skipping");
+            } else {
+                spelling_text += j.getReading() + "\n";
+            }
+        }
+        word.setText(word_text);
+        spelling.setText(spelling_text);
+        TextView sense = (TextView) definitionLayout.findViewById(R.id.sense);
+        String sense_text = "";
+        for (DictionaryParser.Sense j:i.senses) {
+            for (String k:j.getDefinitions()) {
+                sense_text += k + "\n";
+            }
+        }
+        sense.setText(sense_text);
+        definitionLayout.setBackgroundColor(colorRotator.getNextColor());
+        linearLayout.addView(definitionLayout);
     }
 
     private void addTextView(String i) {
@@ -159,7 +178,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             Log.d(debugName, showEntries.toString());
             LinearLayout linearLayout = new LinearLayout(context);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
-            for (String i : showEntries) {
+            for (DictionaryParser.Entry i : showEntries) {
                 addTextView(linearLayout, i);
             }
             scrollView.removeAllViews();
