@@ -22,4 +22,8 @@
     <dimen name="popup_vertical_margin">60dp</dimen>
     <dimen name="popup_horizontal_margin">30dp</dimen>
     <dimen name="popup_height">300dp</dimen>
+    <!-- Padding inside definition layout -->
+    <dimen name="definitionInternalPadding">5dp</dimen>
+    <!-- Limit for word and spelling width -->
+    <dimen name="definitionLimit">100dp</dimen>
 </resources>
