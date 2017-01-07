@@ -27,7 +27,18 @@ public final class DictionaryDbContract {
     public static class DefinitionEntry implements BaseColumns {
         public static final String TABLE_NAME = "definition";
         public static final String COLUMN_NAME_SENSE = "sense";
+    }
+
+    public static class ExampleEntry implements BaseColumns {
+        public static final String TABLE_NAME = "examples";
+        public static final String COLUMN_NAME_WORD = "word";
         public static final String COLUMN_NAME_SPELLING = "spelling";
+    }
+
+    public static class Definition2Example implements BaseColumns {
+        public static final String TABLE_NAME = "definition2example";
+        public static final String COLUMN_NAME_DEFINITION_KEY = "definition_key";
+        public static final String COLUMN_NAME_EXAMPLE_KEY = "example_key";
     }
 
     public static class InputKanjiEntry implements BaseColumns {
@@ -35,9 +46,9 @@ public final class DictionaryDbContract {
         public static final String COLUMN_NAME_KANJI = "word";
     }
 
-    public static class Kanji2Definition implements BaseColumns {
+    public static class Kanji2Example implements BaseColumns {
         public static final String TABLE_NAME = "kanji2definition";
         public static final String COLUMN_NAME_KANJI_KEY = "kanji_key";
-        public static final String COLUMN_NAME_DEFINITION_KEY = "definition_key";
+        public static final String COLUMN_NAME_EXAMPLE_KEY = "example_key";
     }
 }

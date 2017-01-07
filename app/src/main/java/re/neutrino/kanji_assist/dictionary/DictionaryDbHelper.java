@@ -24,36 +24,58 @@ public class DictionaryDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_DEFINITION_TABLE =
             "CREATE TABLE " + DictionaryDbContract.DefinitionEntry.TABLE_NAME + " (" +
                     DictionaryDbContract.DefinitionEntry._ID + " INTEGER PRIMARY KEY," +
-                    DictionaryDbContract.DefinitionEntry.COLUMN_NAME_SENSE +" TEXT," +
-                    DictionaryDbContract.DefinitionEntry.COLUMN_NAME_SPELLING + " TEXT)";
+                    DictionaryDbContract.DefinitionEntry.COLUMN_NAME_SENSE + "TEXT)";
 
     private static final String SQL_CREATE_KANJI_TABLE =
             "CREATE TABLE " + DictionaryDbContract.InputKanjiEntry.TABLE_NAME + " (" +
                     DictionaryDbContract.InputKanjiEntry._ID + " INTEGER PRIMARY KEY," +
                     DictionaryDbContract.InputKanjiEntry.COLUMN_NAME_KANJI + " TEXT)";
 
-    private static final String SQL_CREATE_KANJI2DEF_TABLE =
-            "CREATE TABLE " + DictionaryDbContract.Kanji2Definition.TABLE_NAME + " (" +
-                    DictionaryDbContract.Kanji2Definition.COLUMN_NAME_KANJI_KEY + " INTEGER," +
-                    "FOREIGN KEY(" + DictionaryDbContract.Kanji2Definition.COLUMN_NAME_KANJI_KEY + ") " +
+    private static final String SQL_CREATE_EXAMPLE_TABLE =
+            "CREATE TABLE " + DictionaryDbContract.ExampleEntry.TABLE_NAME + " (" +
+                    DictionaryDbContract.ExampleEntry._ID + " INTEGER PRIMARY KEY," +
+                    DictionaryDbContract.ExampleEntry.COLUMN_NAME_WORD + " TEXT," +
+                    DictionaryDbContract.ExampleEntry.COLUMN_NAME_SPELLING + " TEXT)";
+
+    private static final String SQL_CREATE_DEF2EX_TABLE =
+            "CREATE TABLE " + DictionaryDbContract.Definition2Example.TABLE_NAME + " (" +
+                    DictionaryDbContract.Definition2Example.COLUMN_NAME_EXAMPLE_KEY + " INTEGER," +
+                    "FOREIGN KEY(" + DictionaryDbContract.Definition2Example.COLUMN_NAME_EXAMPLE_KEY + ") " +
                     "REFERENCES " + DictionaryDbContract.InputKanjiEntry.TABLE_NAME +
                     "(" + DictionaryDbContract.InputKanjiEntry._ID + ")," +
-                    DictionaryDbContract.Kanji2Definition.COLUMN_NAME_DEFINITION_KEY + " INTEGER," +
-                    "FOREIGN KEY(" + DictionaryDbContract.Kanji2Definition.COLUMN_NAME_DEFINITION_KEY + ") " +
+                    DictionaryDbContract.Definition2Example.COLUMN_NAME_EXAMPLE_KEY + " INTEGER," +
+                    "FOREIGN KEY(" + DictionaryDbContract.Definition2Example.COLUMN_NAME_DEFINITION_KEY + ") " +
+                    "REFERENCES " + DictionaryDbContract.DefinitionEntry.TABLE_NAME +
+                    "(" + DictionaryDbContract.DefinitionEntry._ID + "))";
+
+    private static final String SQL_CREATE_KANJI2EX_TABLE =
+            "CREATE TABLE " + DictionaryDbContract.Kanji2Example.TABLE_NAME + " (" +
+                    DictionaryDbContract.Kanji2Example.COLUMN_NAME_KANJI_KEY + " INTEGER," +
+                    "FOREIGN KEY(" + DictionaryDbContract.Kanji2Example.COLUMN_NAME_KANJI_KEY + ") " +
+                    "REFERENCES " + DictionaryDbContract.InputKanjiEntry.TABLE_NAME +
+                    "(" + DictionaryDbContract.InputKanjiEntry._ID + ")," +
+                    DictionaryDbContract.Kanji2Example.COLUMN_NAME_EXAMPLE_KEY + " INTEGER," +
+                    "FOREIGN KEY(" + DictionaryDbContract.Kanji2Example.COLUMN_NAME_EXAMPLE_KEY + ") " +
                     "REFERENCES " + DictionaryDbContract.DefinitionEntry.TABLE_NAME +
                     "(" + DictionaryDbContract.DefinitionEntry._ID + "))";
 
     private static final String SQL_DELETE_DEFINITION_TABLE =
             "DROP TABLE IF EXISTS " + DictionaryDbContract.DefinitionEntry.TABLE_NAME;
 
+    private static final String SQL_DELETE_EXAMPLE_TABLE =
+            "DROP TABLE IF EXISTS " + DictionaryDbContract.ExampleEntry.TABLE_NAME;
+
     private static final String SQL_DELETE_KANJI_TABLE =
             "DROP TABLE IF EXISTS " + DictionaryDbContract.InputKanjiEntry.TABLE_NAME;
 
-    private static final String SQL_DELETE_KANJI2DEF_TABLE =
-            "DROP TABLE IF EXISTS " + DictionaryDbContract.Kanji2Definition.TABLE_NAME;
+    private static final String SQL_DELETE_KANJI2EX_TABLE =
+            "DROP TABLE IF EXISTS " + DictionaryDbContract.Kanji2Example.TABLE_NAME;
+
+    private static final String SQL_DELETE_DEF2EX_TABLE =
+            "DROP TABLE IF EXISTS " + DictionaryDbContract.Definition2Example.TABLE_NAME;
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "KanjiAssistDefinitionCache.db";
 
     public DictionaryDbHelper(Context context) {
@@ -61,13 +83,17 @@ public class DictionaryDbHelper extends SQLiteOpenHelper {
     }
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_DEFINITION_TABLE);
+        db.execSQL(SQL_CREATE_EXAMPLE_TABLE);
         db.execSQL(SQL_CREATE_KANJI_TABLE);
-        db.execSQL(SQL_CREATE_KANJI2DEF_TABLE);
+        db.execSQL(SQL_CREATE_DEF2EX_TABLE);
+        db.execSQL(SQL_CREATE_KANJI2EX_TABLE);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
-        db.execSQL(SQL_DELETE_KANJI2DEF_TABLE);
+        db.execSQL(SQL_DELETE_KANJI2EX_TABLE);
+        db.execSQL(SQL_DELETE_DEF2EX_TABLE);
+        db.execSQL(SQL_DELETE_EXAMPLE_TABLE);
         db.execSQL(SQL_DELETE_KANJI_TABLE);
         db.execSQL(SQL_DELETE_DEFINITION_TABLE);
         onCreate(db);
