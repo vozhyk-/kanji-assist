@@ -139,7 +139,7 @@ public class AssistStructureVisualizer extends RelativeLayout {
     private void setTextColors(TextView textView,
                                AnyAssistStructure.ViewNode node) {
         textView.setTextColor(node.getTextColor());
-        setTextBackgroundColor(textView, node.getTextBackgroundColor());
+        textView.setBackgroundColor(node.getTextBackgroundColor());
     }
 
     private void setTextBackgroundColor(TextView textView, int backgroundColor) {
