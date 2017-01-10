@@ -132,7 +132,8 @@ public class AssistStructureVisualizer extends RelativeLayout {
 
         result.setOnClickListener(new OnClickListener(
                 new ScreenText(result.getText().toString(), rect)));
-        result.setCustomSelectionActionModeCallback(new SelectionCallback(result));
+        result.setCustomSelectionActionModeCallback(
+                new SelectionCallback(result, node));
 
         final RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(
@@ -191,9 +192,11 @@ public class AssistStructureVisualizer extends RelativeLayout {
 
     private class SelectionCallback implements ActionMode.Callback {
         private final TextView textView;
+        private final AnyAssistStructure.ViewNode node;
 
-        public SelectionCallback(TextView textView) {
+        public SelectionCallback(TextView textView, AnyAssistStructure.ViewNode node) {
             this.textView = textView;
+            this.node = node;
         }
 
         @Override
@@ -210,14 +213,30 @@ public class AssistStructureVisualizer extends RelativeLayout {
             menu.removeItem(android.R.id.cut);
             menu.removeItem(android.R.id.copy);
             menu.removeItem(android.R.id.shareText);
+
+            if (!BuildConfig.DEBUG)
+                menu.removeItem(R.id.inspect);
+
             return true;
         }
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
-            if (menuItem.getItemId() != R.id.show_dictionary)
-                return false;
+            switch (menuItem.getItemId()) {
+                case R.id.show_dictionary:
+                    showPopupForAssistSelection();
+                    mode.finish();
+                    return true;
+                case R.id.inspect:
+                    inspectView();
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
 
+        private void showPopupForAssistSelection() {
             final int start = textView.getSelectionStart();
             final int end = textView.getSelectionEnd();
             final String selectedText = textView.getText()
@@ -228,8 +247,10 @@ public class AssistStructureVisualizer extends RelativeLayout {
             textView.getGlobalVisibleRect(rect);
 
             showPopup(new ScreenText(selectedText, rect));
-            mode.finish();
-            return true;
+        }
+
+        private void inspectView() {
+            Log.d(TAG, "inspect: " + nodeToString(node, new Rect()));
         }
 
         @Override
