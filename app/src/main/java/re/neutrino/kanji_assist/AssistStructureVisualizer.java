@@ -23,6 +23,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -93,26 +94,31 @@ public class AssistStructureVisualizer extends RelativeLayout {
 
         structureWalker.walkWindows(new AssistStructureWalker.Walker() {
             @Override
-            public ScreenText run(AnyAssistStructure.ViewNode node, Rect position, int depth) {
-                if (node.getText() == null ||
-                        node.getText().toString().isEmpty())
+            public ScreenText run(AnyAssistStructure.ViewNode node, Rect rect, int depth) {
+                if (!nodeHasText(node)) {
                     return null;
+                }
 
-                final TextView textView =
-                        recreateTextView(node, position, depth);
+                final String offset = AssistStructureWalker.getLogOffset(depth);
+
+                final TextView textView = recreateTextView(node, rect, depth,
+                        offset);
                 addView(textView);
                 return null;
+            }
+
+            private boolean nodeHasText(AnyAssistStructure.ViewNode node) {
+                return node.getText() != null &&
+                        !node.getText().toString().isEmpty();
             }
         });
     }
 
     @NonNull
     private TextView recreateTextView(AnyAssistStructure.ViewNode node,
-                                      Rect position, int depth) {
+                                      Rect rect, int depth, String offset) {
         final TextView result = (TextView)
                 inflater.inflate(R.layout.recreated_textview, this, false);
-
-        final String offset = AssistStructureWalker.getLogOffset(depth);
 
         result.setText(node.getText());
         result.setTypeface(result.getTypeface(), node.getTextStyle());
@@ -121,19 +127,32 @@ public class AssistStructureVisualizer extends RelativeLayout {
         result.setAlpha(node.getAlpha());
 
         result.setElevation(dpToPixels(depth));
-        // TODO Transformation
+
+        Log.d(TAG, offset + nodeToString(node, rect));
 
         result.setOnClickListener(new OnClickListener(
-                new ScreenText(result.getText().toString(), position)));
+                new ScreenText(result.getText().toString(), rect)));
         result.setCustomSelectionActionModeCallback(new SelectionCallback(result));
 
         final RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(
                         node.getWidth(), node.getHeight());
-        params.setMargins(position.left, position.top, 0, 0);
+        params.setMargins(rect.left, rect.top, 0, 0);
         result.setLayoutParams(params);
 
         return result;
+    }
+
+    private String nodeToString(AnyAssistStructure.ViewNode node, Rect rect) {
+        StringBuilder msg = new StringBuilder()
+                .append(node.getText())
+                .append("@")
+                .append(rect.toShortString());
+        if (node.getTransformation() != null)
+            msg = msg
+                    .append(", transformation: ")
+                    .append(node.getTransformation());
+        return msg.toString();
     }
 
     private void setTextColors(TextView textView,
