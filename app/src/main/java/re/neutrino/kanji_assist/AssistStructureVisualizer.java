@@ -24,6 +24,7 @@ import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +32,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.Arrays;
 
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.dictionary_popup.DictionaryPopup;
@@ -120,15 +123,18 @@ public class AssistStructureVisualizer extends RelativeLayout {
         final TextView result = (TextView)
                 inflater.inflate(R.layout.recreated_textview, this, false);
 
+        Log.d(TAG, offset + nodeToString(node, rect));
+
         result.setText(node.getText());
+
+        setTextSize(result, node, offset);
+
         result.setTypeface(result.getTypeface(), node.getTextStyle());
         setTextColors(result, node);
 
         result.setAlpha(node.getAlpha());
 
         result.setElevation(dpToPixels(depth));
-
-        Log.d(TAG, offset + nodeToString(node, rect));
 
         result.setOnClickListener(new OnClickListener(
                 new ScreenText(result.getText().toString(), rect)));
@@ -148,11 +154,22 @@ public class AssistStructureVisualizer extends RelativeLayout {
         StringBuilder msg = new StringBuilder()
                 .append(node.getText())
                 .append("@")
-                .append(rect.toShortString());
+                .append(rect.toShortString())
+                .append(", text size: ")
+                .append(node.getTextSize());
+
+        if (node.getTextLineBaselines() != null)
+            msg = msg.append(", line baselines: ")
+                    .append(Arrays.toString(node.getTextLineBaselines()));
+
+        if (node.getTextLineCharOffsets() != null)
+            msg = msg.append(", line char offsets: ")
+                    .append(Arrays.toString(node.getTextLineCharOffsets()));
+
         if (node.getTransformation() != null)
-            msg = msg
-                    .append(", transformation: ")
+            msg = msg.append(", transformation: ")
                     .append(node.getTransformation());
+
         return msg.toString();
     }
 
@@ -171,6 +188,63 @@ public class AssistStructureVisualizer extends RelativeLayout {
         spannable.setSpan(span, 0, spannable.length(),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(spannable);
+    }
+
+    private void setTextSize(TextView textView,
+                             AnyAssistStructure.ViewNode node,
+                             String offset) {
+        /*
+         * TODO Test this method:
+         *   Use chrome_overlapping_paragraph.json
+         *     for a structure with text size in DP.
+         *   Use settings_with_baselines.json
+         *     for a structure with text size in PX.
+         */
+        final float textSize = node.getTextSize();
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
+
+        int textHeight = getTextHeight(textView, node);
+        Log.d(TAG, String.format("%sText height: %d, node height: %d",
+                offset, textHeight, node.getHeight()));
+
+        if (textHeight <= node.getHeight()) {
+            Log.d(TAG, offset + "Using DP is fine");
+            return;
+        }
+
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+
+        textHeight = getTextHeight(textView, node);
+        Log.d(TAG, offset + "Using pixels, new text height: " + textHeight);
+    }
+
+    private int getTextHeight(TextView textView, AnyAssistStructure.ViewNode node) {
+        final int[] lineBaselines = node.getTextLineBaselines();
+        final int[] lineCharOffsets = node.getTextLineCharOffsets();
+
+        if (lineBaselines == null || lineCharOffsets == null)
+            // TODO Test with characters with a small height (e.g. "o").
+            // In that case this might be wrong
+            // (space above the character might not be taken into account)
+            // and we may need to use the bottom of the view as the baseline.
+            return getSingleLineHeight(textView, 0);
+
+        final int lastLineBaseline = lineBaselines[lineBaselines.length - 1];
+        final int lastLineOffset = lineCharOffsets[lineCharOffsets.length - 1];
+        return lastLineBaseline + getSingleLineHeight(textView, lastLineOffset);
+    }
+
+    private int getSingleLineHeight(TextView textView, int start) {
+        final String text = textView.getText().toString();
+        return getTextBounds(textView, text, start, text.length())
+                .height();
+    }
+
+    @NonNull
+    private Rect getTextBounds(TextView textView, String text, int start, int end) {
+        Rect result = new Rect();
+        textView.getPaint().getTextBounds(text, start, end, result);
+        return result;
     }
 
     private float dpToPixels(float dp) {
