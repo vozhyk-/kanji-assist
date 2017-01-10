@@ -20,4 +20,7 @@
 
     <item android:id="@+id/show_dictionary"
           android:title="@string/show_dictionary_label"/>
+    <!-- Only for debug: -->
+    <item android:id="@+id/inspect"
+          android:title="@string/inspect_label"/>
 </menu>

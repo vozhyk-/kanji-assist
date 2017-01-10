@@ -18,4 +18,5 @@
     <string name="app_name">Kanji Assist</string>
     <string name="please_enable_assistant">Please set the active assistant to Kanji Assist.</string>
     <string name="show_dictionary_label">Show dictionary</string>
+    <string name="inspect_label">Inspect</string>
 </resources>
