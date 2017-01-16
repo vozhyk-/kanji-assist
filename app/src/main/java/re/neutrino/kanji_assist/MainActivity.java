@@ -52,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
 
         final ComponentName cn =
                 ComponentName.unflattenFromString(assistantComponent);
+
+        if (cn == null)
+            return false;
+
         final String assistantPackage = cn.getPackageName();
 
         return assistantPackage.equals(getPackageName());
