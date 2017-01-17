@@ -18,6 +18,7 @@ package re.neutrino.kanji_assist;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.text.SpannableString;
@@ -184,8 +185,15 @@ public class AssistStructureVisualizer extends RelativeLayout {
 
     private void setTextColors(TextView textView,
                                AnyAssistStructure.ViewNode node) {
-        textView.setTextColor(node.getTextColor());
-        textView.setBackgroundColor(node.getTextBackgroundColor());
+
+        final int textColor = node.getTextColor();
+        if (textColor != Color.WHITE)
+            textView.setTextColor(textColor);
+
+        //final int defaultBackgroundColor = Color.parseColor("#ffffff");
+        int backgroundColor = node.getTextBackgroundColor();
+        if ((backgroundColor >> (8 * 3)) >= 0x55)
+            textView.setBackgroundColor(backgroundColor);
     }
 
     private void setTextBackgroundColor(TextView textView, int backgroundColor) {
