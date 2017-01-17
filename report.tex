@@ -11,7 +11,7 @@
 
 \section{Introduction}
 
-We both attend japanese language classes. We noticed that there are services
+We both attend Japanese language classes. We've noticed that there are services
 offering translations, but not definition of a symbol or a group of them.
 As we learn more kanji we would get help for chosen ones only.
 There exist plugins that provide similar functionality, but they usually
@@ -22,27 +22,32 @@ provide dictionary definition for anything that appears on a screen.
 
 \section{Use example}
 
-After the Kanji Assist first run (later: App) user is asked to select Kanji
-Assistant as currently used Assitant in the Android system and is redirected
-to said screen. User must agree to allow an App to read screen content.
+On Kanji Assist's first run the user is asked
+to choose it as the currently Assitant in Settings, and the appropriate
+Settings screen is shown. The user needs to allow reading screen content.
 
-After Kanji Assist is successfuly chosen it is ready to work. Assistant
-is called with a long press of a Home button.
+After Kanji Assist is chosen, it is ready to work.
+The user can call it at any time by long-pressing the Home button.
 
 \begin{figure}[h]
 \includegraphics[width=110pt]{screen_3.png}
 \includegraphics[width=110pt]{screen_1.png}
 \includegraphics[width=110pt]{screen_2.png}
 
-From the left: screen before Assistant is called, after Assitant's processing, after text selection
+From the left: before calling Assistant, after Assistant's processing,
+after selecting text.
 \end{figure}
 
-Displayed content will be processed. If a text was selected, popup will appear.
-Otherwise a user should long-press on text or double tap on view of interest
-to get it.
+%The user can select some text before calling the assistant.
+The text on the screen will be processed. %If any text was selected,
+%a popup with its definitions and pronunciations will appear.
+The user can long-press on parts of the text
+or double-tap on a UI element of interest
+to get a popup with information about it.
+Or they can select some text before calling Assistant.
 
-Popup contains various examples of word use, reading and definition of a word
-in english.
+The popup contains various examples of use of the word,
+and its readings and definitions in English.
 
 \newpage
 
@@ -58,12 +63,14 @@ Our plans for the future development include:
 
 \section{Tests, problems}
 
-During the course of our work we stumbled upon following issues:
+During the course of our work we encountered the following issues:
 \begin{itemize}
-    \item Android's API for Asistant is not documented
-    \item most Android testing frameworks do not support Assistant testing
-    \item Assist Application implementation is not popular
-    \item user can use only one Assistant at the time
+    \item Android API for Asistant is almost undocumented
+        and provides inconsistent data about the screen contents.
+    \item Assist Application implementation is not popular --
+        only dummy examples available.
+    \item Most Android testing frameworks do not support Assistant testing.
+    \item The user can only have one Assistant enabled at a time.
 \end{itemize}
 
 \end{document}
