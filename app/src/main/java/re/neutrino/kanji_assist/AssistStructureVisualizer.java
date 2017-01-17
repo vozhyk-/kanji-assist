@@ -17,6 +17,7 @@
 package re.neutrino.kanji_assist;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.text.SpannableString;
@@ -155,8 +156,16 @@ public class AssistStructureVisualizer extends RelativeLayout {
                 .append(node.getText())
                 .append("@")
                 .append(rect.toShortString())
+                .append(", class name: ")
+                .append(node.getClassName())
                 .append(", text size: ")
-                .append(node.getTextSize());
+                .append(node.getTextSize())
+                .append(", scroll: ")
+                .append(new Point(node.getScrollX(), node.getScrollY()))
+                .append(", elevation: ")
+                .append(node.getElevation())
+                .append(", alpha: ")
+                .append(node.getAlpha());
 
         if (node.getTextLineBaselines() != null)
             msg = msg.append(", line baselines: ")

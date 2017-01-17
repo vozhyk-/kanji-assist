@@ -18,12 +18,14 @@ package re.neutrino.kanji_assist.text_extractor;
 
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 
 public class AssistStructureWalker {
     private AnyAssistStructure structure;
+    private String TAG = getClass().getName();
 
     public AssistStructureWalker(AnyAssistStructure structure) {
         this.structure = structure;
@@ -38,6 +40,8 @@ public class AssistStructureWalker {
             final int top = win.getTop();
             final Rect rect = new Rect(left, top,
                     left + win.getWidth(), top + win.getHeight());
+
+            Log.d(TAG, "Window " + win.getTitle() + "@" + rect.toShortString());
 
             final ScreenText found = walkViews(
                     win.getRootViewNode(), rect, rect, walker);
