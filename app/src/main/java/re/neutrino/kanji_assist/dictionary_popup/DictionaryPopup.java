@@ -113,6 +113,15 @@ public class DictionaryPopup extends GridLayout {
             Log.d(tag, "top");
             result.y = textRect.bottom + vertical_margin;
         }
+        //sanititze
+        if (result.y < vertical_margin) {
+            Log.w(tag, "Y value below vertical margin's: " + result.y);
+            result.y = vertical_margin;
+        }
+        if (result.y > (displaySize.y - height - vertical_margin)) {
+            Log.w(tag, "bottom value below vertical margin's: " + result.y);
+            result.y = (displaySize.y - height - vertical_margin);
+        }
         return result;
     }
 
