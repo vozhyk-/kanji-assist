@@ -22,6 +22,6 @@
 
     <color name="colorBorder">#FF8000</color>
 
-    <color name="colorAlternate1">#BBBBBB</color>
-    <color name="colorAlternate2">#DDDDDD</color>
+    <color name="colorAlternate1">#DDDDDD</color>
+    <color name="colorAlternate2">#EEEEEE</color>
 </resources>
