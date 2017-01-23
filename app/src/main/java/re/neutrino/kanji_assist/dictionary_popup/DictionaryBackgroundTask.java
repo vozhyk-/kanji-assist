@@ -40,6 +40,9 @@ import java.util.List;
 
 import re.neutrino.kanji_assist.R;
 import re.neutrino.kanji_assist.dictionary.DictionaryParser;
+import re.neutrino.kanji_assist.dictionary.Entry;
+import re.neutrino.kanji_assist.dictionary.Example;
+import re.neutrino.kanji_assist.dictionary.Sense;
 
 class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
     private final static  String providerURL = "jisho.org";
@@ -50,7 +53,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
     private URL url;
     private ScrollView scrollView;
     private Context context;
-    private ArrayList<DictionaryParser.Entry> showEntries = new ArrayList<>();
+    private ArrayList<Entry> showEntries = new ArrayList<>();
     final RelativeLayout.LayoutParams matchParentLayout =
             new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
@@ -100,14 +103,14 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         String text = strings[0];
         try {
             DictionaryParser dictionaryParser = fetch(text);
-            List<DictionaryParser.Entry> entries =
+            List<Entry> entries =
                     dictionaryParser.getEntries();
             if (entries.size() == 0)
                 return "No definitions found";
             for (int i = 0; i < entries.size(); i++) {
-                DictionaryParser.Entry entry = entries.get(i);
-                ArrayList<DictionaryParser.Example> examples = entry.examples;
-                ArrayList<DictionaryParser.Sense> senses = entry.senses;
+                Entry entry = entries.get(i);
+                ArrayList<Example> examples = entry.examples;
+                ArrayList<Sense> senses = entry.senses;
                 if (examples.size() == 0) {
                     Log.w(debugName, "no words found, skip");
                     continue;
@@ -133,14 +136,14 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         }
     }
 
-    private void addTextView(LinearLayout linearLayout, DictionaryParser.Entry i) {
+    private void addTextView(LinearLayout linearLayout, Entry i) {
         LinearLayout definitionLayout =
                 (LinearLayout) View.inflate(context, R.layout.definition, null);
         TextView word = (TextView) definitionLayout.findViewById(R.id.word);
         TextView spelling = (TextView) definitionLayout.findViewById(R.id.spelling);
         String word_text = "";
         String spelling_text = "";
-        for (DictionaryParser.Example j:i.examples) {
+        for (Example j:i.examples) {
             if (j.getWord() == null) {
                 Log.d(debugName, "null word, skipping");
             } else {
@@ -156,7 +159,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         spelling.setText(spelling_text);
         TextView sense = (TextView) definitionLayout.findViewById(R.id.sense);
         String sense_text = "";
-        for (DictionaryParser.Sense j:i.senses) {
+        for (Sense j:i.senses) {
             for (String k:j.getDefinitions()) {
                 sense_text += k + "\n";
             }
@@ -178,7 +181,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             Log.d(debugName, showEntries.toString());
             LinearLayout linearLayout = new LinearLayout(context);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
-            for (DictionaryParser.Entry i : showEntries) {
+            for (Entry i : showEntries) {
                 addTextView(linearLayout, i);
             }
             scrollView.removeAllViews();

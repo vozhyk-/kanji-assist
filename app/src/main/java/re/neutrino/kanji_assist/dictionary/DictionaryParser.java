@@ -60,11 +60,6 @@ public class DictionaryParser {
         reader.endObject();
     }
 
-    public class Entry {
-        public ArrayList<Example> examples = new ArrayList<>();
-        public ArrayList<Sense> senses = new ArrayList<>();
-    }
-
     private Entry readEntry() throws IOException {
         Entry entry = new Entry();
 
@@ -84,18 +79,6 @@ public class DictionaryParser {
             Log.w(debugName, "size mismatch: "
                     + entry.examples.size() + " vs. " + entry.senses.size());
         return entry;
-    }
-
-    public class Sense {
-        private ArrayList<String> definitions = new ArrayList<>();
-
-        public String toString() {
-            return "definitions: " + getDefinitions().toString();
-        }
-
-        public ArrayList<String> getDefinitions() {
-            return definitions;
-        }
     }
 
     private void readSenses(Entry entry) throws  IOException {
@@ -125,23 +108,6 @@ public class DictionaryParser {
         return sense;
     }
 
-    public class Example {
-        private String word;
-        private String reading;
-
-        public String toString() {
-            return "word: " + getWord() + ", reading: " + getReading();
-        }
-
-        public String getWord() {
-            return word;
-        }
-
-        public String getReading() {
-            return reading;
-        }
-    }
-
     private void readExamples(Entry entry) throws IOException {
         reader.beginArray();
         while (reader.hasNext()) {
@@ -151,19 +117,21 @@ public class DictionaryParser {
     }
 
     private Example readExample() throws IOException {
-        Example example = new Example();
+        String word = "";
+        String reading = "";
         reader.beginObject();
         while (reader.hasNext()) {
             String name = reader.nextName();
             if (name.equals("word")) {
-                example.word = reader.nextString();
+                word = reader.nextString();
             } else if (name.equals("reading")) {
-                example.reading = reader.nextString();
+                reading = reader.nextString();
             } else {
                 reader.skipValue();
             }
         }
         reader.endObject();
+        Example example = new Example(word, reading);
         Log.d(debugName, example.toString());
         return example;
     }
