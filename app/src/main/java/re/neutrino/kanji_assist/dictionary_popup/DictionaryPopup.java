@@ -22,6 +22,7 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -30,16 +31,26 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import re.neutrino.kanji_assist.R;
+import re.neutrino.kanji_assist.dictionary.Entry;
+import re.neutrino.kanji_assist.dictionary.Example;
+import re.neutrino.kanji_assist.dictionary.Sense;
 import re.neutrino.kanji_assist.text_extractor.ScreenText;
 
 public class DictionaryPopup extends GridLayout {
     private String TAG = getClass().getName();
+    private final static String debugName = "dictionaryPopup";
 
     private Dictionary dictionary;
+    private Context context;
+    private ColorRotator colorRotator;
+    private ScrollView scrollView;
+
 
     public DictionaryPopup(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -48,6 +59,9 @@ public class DictionaryPopup extends GridLayout {
         inflater.inflate(R.layout.popup, this);
 
         this.dictionary = new Dictionary();
+        this.context = context;
+        this.colorRotator = new ColorRotator();
+        this.scrollView = (ScrollView) this.findViewById(R.id.scrollView);
     }
 
     public DictionaryPopup(Context context) {
@@ -131,5 +145,57 @@ public class DictionaryPopup extends GridLayout {
 
     private void close() {
         setVisibility(GONE);
+    }
+
+    private class ColorRotator {
+        private int colors[] = {
+                ContextCompat.getColor(context, R.color.colorAlternate1),
+                ContextCompat.getColor(context, R.color.colorAlternate2)};
+        private int index = 0;
+        private int size = 2;
+
+        private int getNextColor() {
+            index = (index+1) % size;
+            return colors[index];
+        }
+    }
+
+    public void addTextView(LinearLayout linearLayout, Entry i) {
+        LinearLayout definitionLayout =
+                (LinearLayout) View.inflate(context, R.layout.definition, null);
+        TextView word = (TextView) definitionLayout.findViewById(R.id.word);
+        TextView spelling = (TextView) definitionLayout.findViewById(R.id.spelling);
+        String word_text = "";
+        String spelling_text = "";
+        for (Example j:i.examples) {
+            if (j.getWord() == null) {
+                Log.d(debugName, "null word, skipping");
+            } else {
+                word_text += j.getWord() + "\n";
+            }
+            if (j.getReading() == null) {
+                Log.d(debugName, "null reading, skipping");
+            } else {
+                spelling_text += j.getReading() + "\n";
+            }
+        }
+        word.setText(word_text);
+        spelling.setText(spelling_text);
+        TextView sense = (TextView) definitionLayout.findViewById(R.id.sense);
+        String sense_text = "";
+        for (Sense j:i.senses) {
+            for (String k:j.getDefinitions()) {
+                sense_text += k + "\n";
+            }
+        }
+        sense.setText(sense_text);
+        definitionLayout.setBackgroundColor(colorRotator.getNextColor());
+        linearLayout.addView(definitionLayout);
+    }
+
+    public void addTextView(String i) {
+        TextView textView = new TextView(context);
+        textView.setText(i);
+        scrollView.addView(textView);
     }
 }

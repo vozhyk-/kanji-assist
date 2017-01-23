@@ -18,14 +18,11 @@ package re.neutrino.kanji_assist.dictionary_popup;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,29 +55,17 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.MATCH_PARENT);
-    private ColorRotator colorRotator;
+    private DictionaryPopup dictionaryPopup;
 
     DictionaryBackgroundTask(DictionaryPopup dictionaryPopup) {
+        this.dictionaryPopup = dictionaryPopup;
         this.context = dictionaryPopup.getContext();
         this.scrollView = (ScrollView) dictionaryPopup.findViewById(R.id.scrollView);
         this.scrollView.removeAllViews();
         ProgressBar progress = new ProgressBar(this.context);
         progress.setLayoutParams(matchParentLayout);
         this.scrollView.addView(progress);
-        this.colorRotator = new ColorRotator();
-    }
 
-    private class ColorRotator {
-        private int colors[] = {
-                ContextCompat.getColor(context, R.color.colorAlternate1),
-                ContextCompat.getColor(context, R.color.colorAlternate2)};
-        private int index = 0;
-        private int size = 2;
-
-        private int getNextColor() {
-            index = (index+1) % size;
-            return colors[index];
-        }
     }
 
     private DictionaryParser fetch(String text) throws IOException {
@@ -136,45 +121,6 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
         }
     }
 
-    private void addTextView(LinearLayout linearLayout, Entry i) {
-        LinearLayout definitionLayout =
-                (LinearLayout) View.inflate(context, R.layout.definition, null);
-        TextView word = (TextView) definitionLayout.findViewById(R.id.word);
-        TextView spelling = (TextView) definitionLayout.findViewById(R.id.spelling);
-        String word_text = "";
-        String spelling_text = "";
-        for (Example j:i.examples) {
-            if (j.getWord() == null) {
-                Log.d(debugName, "null word, skipping");
-            } else {
-                word_text += j.getWord() + "\n";
-            }
-            if (j.getReading() == null) {
-                Log.d(debugName, "null reading, skipping");
-            } else {
-                spelling_text += j.getReading() + "\n";
-            }
-        }
-        word.setText(word_text);
-        spelling.setText(spelling_text);
-        TextView sense = (TextView) definitionLayout.findViewById(R.id.sense);
-        String sense_text = "";
-        for (Sense j:i.senses) {
-            for (String k:j.getDefinitions()) {
-                sense_text += k + "\n";
-            }
-        }
-        sense.setText(sense_text);
-        definitionLayout.setBackgroundColor(colorRotator.getNextColor());
-        linearLayout.addView(definitionLayout);
-    }
-
-    private void addTextView(String i) {
-        TextView textView = new TextView(context);
-        textView.setText(i);
-        scrollView.addView(textView);
-    }
-
     @Override
     protected void onPostExecute(String result) {
         if (result == null) {
@@ -182,13 +128,13 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             LinearLayout linearLayout = new LinearLayout(context);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             for (Entry i : showEntries) {
-                addTextView(linearLayout, i);
+                dictionaryPopup.addTextView(linearLayout, i);
             }
             scrollView.removeAllViews();
             scrollView.addView(linearLayout);
         } else {
             scrollView.removeAllViews();
-            addTextView(result);
+            dictionaryPopup.addTextView(result);
         }
     }
 }
