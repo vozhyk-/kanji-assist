@@ -28,7 +28,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/definitionInternalPadding"
-        android:maxWidth="@dimen/definitionLimit"/>
+        android:maxWidth="@dimen/definitionLimit"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"/>
 
     <TextView
         android:text="textSpelling"
@@ -36,13 +37,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/spelling"
         android:padding="@dimen/definitionInternalPadding"
-        android:maxWidth="@dimen/definitionLimit"/>
+        android:maxWidth="@dimen/definitionLimit"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"/>
 
     <TextView
         android:text="textSense"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sense"
-        android:padding="@dimen/definitionInternalPadding"/>
+        android:padding="@dimen/definitionInternalPadding"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"/>
 
 </LinearLayout>
