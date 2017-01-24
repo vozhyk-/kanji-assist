@@ -131,8 +131,6 @@ public class AssistStructureVisualizer extends RelativeLayout {
 
         result.setAlpha(node.getAlpha());
 
-        result.setElevation(dpToPixels(depth));
-
         result.setOnClickListener(new OnClickListener(
                 new ScreenText(result.getText().toString(), rect)));
         result.setCustomSelectionActionModeCallback(
