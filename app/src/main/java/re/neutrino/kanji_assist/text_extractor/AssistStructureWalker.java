@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
+import re.neutrino.kanji_assist.AssistStructureVisualizer;
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 
 public class AssistStructureWalker {
@@ -61,9 +62,16 @@ public class AssistStructureWalker {
     @Nullable
     private static ScreenText walkViews(
             AnyAssistStructure.ViewNode node, Rect rect, Rect windowRect, Walker walker, int depth) {
-        if (node.getVisibility() != View.VISIBLE ||
-                !Rect.intersects(rect, windowRect))
+        if (node.getVisibility() != View.VISIBLE) {
+            String visibility = nodeVisibilityString(node);
+            Log.d("AssistStructureWalker",
+                    "Skipping (" + visibility +
+                            "), rect: " + rect.toShortString() +
+                            ", windowRect: " + windowRect.toShortString() +
+                            ", node (same rect): " +
+                            AssistStructureVisualizer.nodeToString(node, rect));
             return null;
+        }
 
         final int left = rect.left + node.getLeft();
         final int top = rect.top + node.getTop();
@@ -71,15 +79,21 @@ public class AssistStructureWalker {
                 left, top,
                 left + node.getWidth(), top + node.getHeight());
 
+        if (!Rect.intersects(rect, windowRect)) {
+            Log.d("AssistStructureWalker",
+                    "Skipping (outside window), rect: " + rect.toShortString() +
+                            ", windowRect: " + windowRect.toShortString() +
+                            ", node (same rect): " +
+                            AssistStructureVisualizer.nodeToString(node, rect));
+            return null;
+        }
+
         ScreenText found = walker.run(node, rect, depth);
         if (found != null)
             return found;
 
         for (int i = 0; i < node.getChildCount(); i++) {
-            rect.set(
-                    rect.left - node.getScrollX(),
-                    rect.top - node.getScrollY(),
-                    rect.right, rect.bottom);
+            rect.offset(-node.getScrollX(), -node.getScrollY());
 
             found = walkViews(node.getChildAt(i), rect, windowRect, walker, depth + 1);
             if (found != null)
@@ -87,6 +101,15 @@ public class AssistStructureWalker {
         }
 
         return null;
+    }
+
+    private static String nodeVisibilityString(AnyAssistStructure.ViewNode node) {
+        String visibility = "unknown visibility";
+        if (node.getVisibility() == View.INVISIBLE)
+            visibility = "INVISIBLE";
+        else if (node.getVisibility() == View.GONE)
+            visibility = "GONE";
+        return visibility;
     }
 
     public static String getLogOffset(int depth) {
