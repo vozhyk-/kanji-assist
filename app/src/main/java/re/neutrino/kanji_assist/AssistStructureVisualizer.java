@@ -194,8 +194,12 @@ public class AssistStructureVisualizer extends RelativeLayout {
                 offset, textHeight, node.getHeight()));
 
         if (textHeight <= node.getHeight()) {
-            Log.d(TAG, offset + "Using DP is fine");
-            return;
+            Log.d(TAG, offset + "Using DP might be fine");
+            float textSizeLimit = 24;
+            if (textSize <= textSizeLimit) {
+                Log.d(TAG, offset + "No, text size > limit");
+                return;
+            }
         }
 
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
