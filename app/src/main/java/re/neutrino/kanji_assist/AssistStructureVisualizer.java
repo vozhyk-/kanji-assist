@@ -213,15 +213,20 @@ public class AssistStructureVisualizer extends RelativeLayout {
         final int[] lineCharOffsets = node.getTextLineCharOffsets();
 
         if (lineBaselines == null || lineCharOffsets == null)
-            // TODO Test with characters with a small height (e.g. "o").
-            // In that case this might be wrong
-            // (space above the character might not be taken into account)
-            // and we may need to use the bottom of the view as the baseline.
-            return getSingleLineHeight(textView, 0);
+            return getViewHeight(textView);
 
+        // TODO Test with characters with a small height (e.g. "o").
+        // In that case this might be wrong
+        // (space above the character might not be taken into account)
+        // and we may need to use the bottom of the view as the baseline.
         final int lastLineBaseline = lineBaselines[lineBaselines.length - 1];
         final int lastLineOffset = lineCharOffsets[lineCharOffsets.length - 1];
         return lastLineBaseline + getSingleLineHeight(textView, lastLineOffset);
+    }
+
+    private int getViewHeight(View view) {
+        view.measure(0, 0);
+        return view.getMeasuredHeight();
     }
 
     private int getSingleLineHeight(TextView textView, int start) {
