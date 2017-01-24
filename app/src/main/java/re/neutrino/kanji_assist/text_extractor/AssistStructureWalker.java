@@ -21,7 +21,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
-import re.neutrino.kanji_assist.AssistStructureVisualizer;
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 
 public class AssistStructureWalker {
@@ -62,16 +61,8 @@ public class AssistStructureWalker {
     @Nullable
     private static ScreenText walkViews(
             AnyAssistStructure.ViewNode node, Rect rect, Rect windowRect, Walker walker, int depth) {
-        if (node.getVisibility() != View.VISIBLE) {
-            String visibility = nodeVisibilityString(node);
-            Log.d("AssistStructureWalker",
-                    "Skipping (" + visibility +
-                            "), rect: " + rect.toShortString() +
-                            ", windowRect: " + windowRect.toShortString() +
-                            ", node (same rect): " +
-                            AssistStructureVisualizer.nodeToString(node, rect));
+        if (node.getVisibility() != View.VISIBLE)
             return null;
-        }
 
         final int left = rect.left + node.getLeft();
         final int top = rect.top + node.getTop();
@@ -79,14 +70,8 @@ public class AssistStructureWalker {
                 left, top,
                 left + node.getWidth(), top + node.getHeight());
 
-        if (!Rect.intersects(rect, windowRect)) {
-            Log.d("AssistStructureWalker",
-                    "Skipping (outside window), rect: " + rect.toShortString() +
-                            ", windowRect: " + windowRect.toShortString() +
-                            ", node (same rect): " +
-                            AssistStructureVisualizer.nodeToString(node, rect));
+        if (!Rect.intersects(rect, windowRect))
             return null;
-        }
 
         ScreenText found = walker.run(node, rect, depth);
         if (found != null)
