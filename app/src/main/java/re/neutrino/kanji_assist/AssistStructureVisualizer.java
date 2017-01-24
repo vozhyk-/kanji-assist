@@ -147,7 +147,7 @@ public class AssistStructureVisualizer extends RelativeLayout {
         return result;
     }
 
-    private String nodeToString(AnyAssistStructure.ViewNode node, Rect rect) {
+    public static String nodeToString(AnyAssistStructure.ViewNode node, Rect rect) {
         StringBuilder msg = new StringBuilder()
                 .append(node.getText())
                 .append("@")
