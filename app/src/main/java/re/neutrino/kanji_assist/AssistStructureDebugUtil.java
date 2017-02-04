@@ -18,7 +18,9 @@ package re.neutrino.kanji_assist;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.File;
@@ -32,6 +34,8 @@ import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.assist_structure.FakeAssistStructure;
 
 public class AssistStructureDebugUtil {
+    private final String TAG = getClass().getName();
+
     private Context context;
 
     public AssistStructureDebugUtil(Context context) {
@@ -51,35 +55,68 @@ public class AssistStructureDebugUtil {
         if (!BuildConfig.DEBUG)
             return;
 
+        if (!getWritePermission())
+            return;
+
+        final File directory = makeDebugDirectory();
+        final File file = new File(directory, "assist.json");
+
         final FakeAssistStructure fakeStructure =
                 new FakeAssistStructure(structure);
-
-        if (!isExternalStorageWritable()) {
-            Log.w(getClass().getName(),
-                    "External storage not writable, not saving assist structure");
-            return;
-        }
-
-        // TODO Ask for permission interactively
-
-        File file = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOCUMENTS), "assist.json");
-        file.getParentFile().mkdirs();
 
         try (FileOutputStream output = new FileOutputStream(file)) {
             try (OutputStreamWriter writer = new OutputStreamWriter(output)) {
                 writer.write(fakeStructure.toJSON());
+                Log.i(TAG, "Saved assist structure to " + file);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        Log.i(getClass().getName(),
-                "Saved assist structure to " + file);
+    public void saveScreenshotForDebug(Bitmap screenshot) {
+        if (!BuildConfig.DEBUG)
+            return;
+
+        if (screenshot == null) {
+            Log.w(TAG, "No screenshot provided - nothing to save.");
+            return;
+        }
+
+        if (!getWritePermission())
+            return;
+
+        final File directory = makeDebugDirectory();
+        final File file = new File(directory, "assist.png");
+
+        try (FileOutputStream output = new FileOutputStream(file)) {
+            screenshot.compress(Bitmap.CompressFormat.PNG, 100, output);
+            Log.i(TAG, "Saved screenshot to " + file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean getWritePermission() {
+        if (!isExternalStorageWritable()) {
+            Log.w(TAG, "External storage not writable, not saving assist structure");
+            return false;
+        }
+
+        // TODO Ask for permission interactively
+        return true;
     }
 
     private boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
+    }
+
+    @NonNull
+    private File makeDebugDirectory() {
+        final File directory = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS);
+        directory.mkdirs();
+        return directory;
     }
 }
