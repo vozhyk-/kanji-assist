@@ -17,7 +17,9 @@
 package re.neutrino.kanji_assist;
 
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -55,7 +57,7 @@ public class AssistStructureDebugUtil {
         if (!BuildConfig.DEBUG)
             return;
 
-        if (!getWritePermission())
+        if (!checkWritePermission())
             return;
 
         final File directory = makeDebugDirectory();
@@ -83,7 +85,7 @@ public class AssistStructureDebugUtil {
             return;
         }
 
-        if (!getWritePermission())
+        if (!checkWritePermission())
             return;
 
         final File directory = makeDebugDirectory();
@@ -97,13 +99,20 @@ public class AssistStructureDebugUtil {
         }
     }
 
-    private boolean getWritePermission() {
+    private boolean checkWritePermission() {
         if (!isExternalStorageWritable()) {
-            Log.w(TAG, "External storage not writable, not saving assist structure");
+            Log.w(TAG, "External storage not writable; not saving debug files");
             return false;
         }
 
-        // TODO Ask for permission interactively
+        final boolean granted = context.checkSelfPermission(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED;
+        if (!granted) {
+            Log.w(TAG, "WRITE_EXTERNAL_STORAGE not allowed; not saving debug files");
+            return false;
+        }
+
         return true;
     }
 
