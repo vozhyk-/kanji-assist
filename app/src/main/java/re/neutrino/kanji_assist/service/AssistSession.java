@@ -19,6 +19,7 @@ package re.neutrino.kanji_assist.service;
 import android.app.assist.AssistContent;
 import android.app.assist.AssistStructure;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.service.voice.VoiceInteractionSession;
 import android.view.View;
@@ -31,10 +32,13 @@ import re.neutrino.kanji_assist.assist_structure.RealAssistStructure;
 
 class AssistSession extends VoiceInteractionSession {
 
+    private AssistStructureDebugUtil debugUtil;
     private AssistStructureVisualizer visualizer;
 
     AssistSession(Context context) {
         super(context);
+
+        debugUtil = new AssistStructureDebugUtil(getContext());
     }
 
     @Override
@@ -62,9 +66,16 @@ class AssistSession extends VoiceInteractionSession {
         }
         getWindow().show();
 
-        new AssistStructureDebugUtil(getContext()).saveStructureForDebug(structure);
+        debugUtil.saveStructureForDebug(structure);
 
         visualizer.show(structure);
+    }
+
+    @Override
+    public void onHandleScreenshot(Bitmap screenshot) {
+        super.onHandleScreenshot(screenshot);
+
+        debugUtil.saveScreenshotForDebug(screenshot);
     }
 
     @Override
