@@ -34,12 +34,12 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class AssistStructureVisualizerTest extends BasicTest {
+public class VisualizerTest extends BasicTest {
 
     @Rule
-    public ActivityTestRule<AssistStructureVisualizerActivity> rule =
-            new ActivityTestRule<AssistStructureVisualizerActivity>
-                    (AssistStructureVisualizerActivity.class, true, false);
+    public ActivityTestRule<VisualizerActivity> rule =
+            new ActivityTestRule<VisualizerActivity>
+                    (VisualizerActivity.class, true, false);
 
     @Test
     public void visualizer_edittext_hint() {
@@ -54,8 +54,8 @@ public class AssistStructureVisualizerTest extends BasicTest {
     }
 
     private Intent intentWithFixture(String fixtureName) {
-        return new Intent(context, AssistStructureVisualizerActivity.class)
-                .putExtra(AssistStructureVisualizerActivity.FIXTURE_NAME_KEY,
+        return new Intent(context, VisualizerActivity.class)
+                .putExtra(VisualizerActivity.FIXTURE_NAME_KEY,
                         fixtureName);
     }
 }

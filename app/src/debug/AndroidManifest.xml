@@ -23,7 +23,7 @@
     <application>
 
         <activity
-            android:name=".AssistStructureVisualizerActivity"
+            android:name=".VisualizerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_assist_structure_visualizer"
             android:theme="@style/FullscreenTheme">

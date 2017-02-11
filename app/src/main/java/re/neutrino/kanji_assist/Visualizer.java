@@ -39,7 +39,7 @@ import re.neutrino.kanji_assist.text_extractor.AssistStructureWalker;
 import re.neutrino.kanji_assist.text_extractor.ScreenText;
 import re.neutrino.kanji_assist.text_extractor.TextExtractor;
 
-public class AssistStructureVisualizer extends RelativeLayout {
+public class Visualizer extends RelativeLayout {
     private DictionaryPopup dictionaryPopup;
 
     private final LayoutInflater inflater;
@@ -48,7 +48,7 @@ public class AssistStructureVisualizer extends RelativeLayout {
 
     private String TAG = getClass().getName();
 
-    public AssistStructureVisualizer(Context context, AttributeSet attrs) {
+    public Visualizer(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         inflater = LayoutInflater.from(context);
@@ -57,7 +57,7 @@ public class AssistStructureVisualizer extends RelativeLayout {
         dictionaryPopup = new DictionaryPopup(getContext());
     }
 
-    public AssistStructureVisualizer(Context context) {
+    public Visualizer(Context context) {
         this(context, null);
     }
 

@@ -38,7 +38,7 @@ import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class AssistStructureVisualizerActivity extends AppCompatActivity {
+public class VisualizerActivity extends AppCompatActivity {
     public static final String STRUCTURE_KEY = "structure";
     public static final String FIXTURE_NAME_KEY = "fixture_name";
 
@@ -85,7 +85,7 @@ public class AssistStructureVisualizerActivity extends AppCompatActivity {
 
     private AnyAssistStructure structure;
 
-    private AssistStructureVisualizer visualizer;
+    private Visualizer visualizer;
 
     private AssistStructureDebugUtil util;
 
@@ -97,8 +97,7 @@ public class AssistStructureVisualizerActivity extends AppCompatActivity {
 
         contentView = findViewById(R.id.fullscreen_content);
         util = new AssistStructureDebugUtil(this);
-        visualizer = (AssistStructureVisualizer)
-                findViewById(R.id.visualizer_in_activity);
+        visualizer = (Visualizer) findViewById(R.id.visualizer_in_activity);
 
         loadFixture();
         visualizer.show(structure);

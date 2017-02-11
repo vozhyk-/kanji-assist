@@ -26,14 +26,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import re.neutrino.kanji_assist.AssistStructureDebugUtil;
-import re.neutrino.kanji_assist.AssistStructureVisualizer;
+import re.neutrino.kanji_assist.Visualizer;
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.assist_structure.RealAssistStructure;
 
 class AssistSession extends VoiceInteractionSession {
 
     private AssistStructureDebugUtil debugUtil;
-    private AssistStructureVisualizer visualizer;
+    private Visualizer visualizer;
 
     AssistSession(Context context) {
         super(context);
@@ -43,7 +43,7 @@ class AssistSession extends VoiceInteractionSession {
 
     @Override
     public View onCreateContentView() {
-        visualizer = new AssistStructureVisualizer(getWindow().getContext());
+        visualizer = new Visualizer(getWindow().getContext());
         return visualizer;
     }
 
