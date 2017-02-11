@@ -28,10 +28,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.dictionary_popup.DictionaryPopup;
@@ -48,6 +52,8 @@ public class Visualizer extends RelativeLayout {
 
     private String TAG = getClass().getName();
 
+    private List<TextView> recreatedViews = new ArrayList<>();
+
     public Visualizer(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -63,13 +69,19 @@ public class Visualizer extends RelativeLayout {
 
     public void show(AnyAssistStructure structure) {
         textExtractor = new TextExtractor(structure);
-        showPopupForSelectedText();
 
+        showPopupForSelectedText();
         recreateTextViews(structure);
     }
 
     public void clear() {
         removeAllViews();
+        recreatedViews.clear();
+    }
+
+    private void addRecreatedView(TextView textView) {
+        recreatedViews.add(textView);
+        addView(textView);
     }
 
     private void showPopupForSelectedText() {
@@ -104,7 +116,7 @@ public class Visualizer extends RelativeLayout {
 
                 final TextView textView = recreateTextView(node, rect, depth,
                         offset);
-                addView(textView);
+                addRecreatedView(textView);
                 return null;
             }
         });
@@ -140,6 +152,34 @@ public class Visualizer extends RelativeLayout {
         return result;
     }
 
+    private void showOverlappingViews(TextView view) {
+        final ArrayList<TextView> overlappingViews = findOverlappingViews(view);
+
+        Log.d(TAG, "overlapping views:");
+        for (TextView v: overlappingViews) {
+            Log.d(TAG, "    " + v.getText());
+        }
+
+        final ListView container = (ListView) inflater.inflate(
+                R.layout.overlapping_views_popup, this, false);
+        container.setAdapter(new ArrayAdapter<>(
+                getContext(), R.layout.recreated_textview, overlappingViews));
+        addView(container);
+    }
+
+    private ArrayList<TextView> findOverlappingViews(TextView selected) {
+        final ArrayList<TextView> result = new ArrayList<>();
+
+        final Rect selectedRect = viewGetGlobalVisibleRect(selected);
+        for (TextView view: recreatedViews) {
+            final Rect rect = viewGetGlobalVisibleRect(view);
+            if (Rect.intersects(selectedRect, rect))
+                result.add(view);
+        }
+
+        return result;
+    }
+
     private static CharSequence nodeGetTextToDisplay(AnyAssistStructure.ViewNode node) {
         final CharSequence text = node.getText();
         if (isNotEmpty(text))
@@ -154,6 +194,13 @@ public class Visualizer extends RelativeLayout {
 
     private static boolean isNotEmpty(CharSequence seq) {
         return seq != null && !seq.toString().isEmpty();
+    }
+
+    @NonNull
+    private static Rect viewGetGlobalVisibleRect(View view) {
+        final Rect rect = new Rect();
+        view.getGlobalVisibleRect(rect);
+        return rect;
     }
 
     public static String nodeToString(AnyAssistStructure.ViewNode node, Rect rect) {
@@ -300,15 +347,19 @@ public class Visualizer extends RelativeLayout {
             switch (menuItem.getItemId()) {
                 case R.id.show_dictionary:
                     showPopupForAssistSelection();
-                    mode.finish();
-                    return true;
+                    break;
+                case R.id.overlapping_views:
+                    showOverlappingViews();
+                    break;
                 case R.id.inspect:
                     inspectView();
-                    mode.finish();
-                    return true;
+                    break;
                 default:
                     return false;
             }
+
+            mode.finish();
+            return true;
         }
 
         private void showPopupForAssistSelection() {
@@ -318,18 +369,21 @@ public class Visualizer extends RelativeLayout {
                     .subSequence(start, end)
                     .toString();
 
-            final Rect rect = new Rect();
-            textView.getGlobalVisibleRect(rect);
+            final Rect rect = viewGetGlobalVisibleRect(textView);
 
             showPopup(new ScreenText(selectedText, rect));
+        }
+
+        private void showOverlappingViews() {
+            Visualizer.this.showOverlappingViews(textView);
         }
 
         private void inspectView() {
             Log.d(TAG, "inspect: " + nodeToString(node, new Rect()));
         }
-
         @Override
         public void onDestroyActionMode(ActionMode mode) {
         }
+
     }
 }

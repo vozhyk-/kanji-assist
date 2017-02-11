@@ -15,14 +15,8 @@
   ~ limitations under the License.
   -->
 
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:android="http://schemas.android.com/apk/res/android">
+<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
 
-    <item android:id="@+id/show_dictionary"
-          android:title="@string/show_dictionary_label"/>
-    <item android:id="@+id/overlapping_views"
-          android:title="Overlapping views"/>
-    <!-- Only for debug: -->
-    <item android:id="@+id/inspect"
-          android:title="@string/inspect_label"/>
-</menu>
+</ListView>
