@@ -24,6 +24,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
+import com.orm.SugarContext;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -39,6 +41,7 @@ import re.neutrino.kanji_assist.R;
 import re.neutrino.kanji_assist.dictionary.DictionaryParser;
 import re.neutrino.kanji_assist.dictionary.Entry;
 import re.neutrino.kanji_assist.dictionary.Example;
+import re.neutrino.kanji_assist.dictionary.Record;
 import re.neutrino.kanji_assist.dictionary.Sense;
 
 class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
@@ -56,6 +59,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
                     RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.MATCH_PARENT);
     private DictionaryPopup dictionaryPopup;
+    private String kanji;
 
     DictionaryBackgroundTask(DictionaryPopup dictionaryPopup) {
         this.dictionaryPopup = dictionaryPopup;
@@ -68,8 +72,8 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
 
     }
 
-    private DictionaryParser fetch(String text) throws IOException {
-        String query = URLEncoder.encode(text, "utf-8");
+    private DictionaryParser fetch() throws IOException {
+        String query = URLEncoder.encode(this.kanji, "utf-8");
         url = new URL(baseApiUrl + query);
         Log.d(debugName, "URL: " + url);
         connection = (HttpURLConnection) url.openConnection();
@@ -85,9 +89,9 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... strings) {
         Log.d(debugName, "start");
-        String text = strings[0];
+        this.kanji = strings[0];
         try {
-            DictionaryParser dictionaryParser = fetch(text);
+            DictionaryParser dictionaryParser = fetch();
             List<Entry> entries =
                     dictionaryParser.getEntries();
             if (entries.size() == 0)
@@ -106,7 +110,6 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
                 }
                 showEntries.add(entry);
             }
-            return null;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return "Error: unsupported encoding";
@@ -119,6 +122,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             e.printStackTrace();
             return "Error: Failed to fetch definitions";
         }
+        return null;
     }
 
     @Override
@@ -136,5 +140,8 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             scrollView.removeAllViews();
             dictionaryPopup.addTextView(result);
         }
+        //Record rec = new Record(kanji, showEntries);
+        Record rec = new Record();
+        dictionaryPopup.getDictionary().save_record(rec);
     }
 }

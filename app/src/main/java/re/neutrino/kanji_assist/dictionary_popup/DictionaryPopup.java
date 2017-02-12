@@ -58,7 +58,7 @@ public class DictionaryPopup extends GridLayout {
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.popup, this);
 
-        this.dictionary = new Dictionary();
+        this.dictionary = new Dictionary(context);
         this.context = context;
         this.colorRotator = new ColorRotator();
         this.scrollView = (ScrollView) this.findViewById(R.id.scrollView);
@@ -197,5 +197,9 @@ public class DictionaryPopup extends GridLayout {
         TextView textView = new TextView(context);
         textView.setText(i);
         scrollView.addView(textView);
+    }
+
+    public Dictionary getDictionary() {
+        return this.dictionary;
     }
 }

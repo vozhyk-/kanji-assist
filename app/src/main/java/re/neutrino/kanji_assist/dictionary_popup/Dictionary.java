@@ -18,14 +18,25 @@ package re.neutrino.kanji_assist.dictionary_popup;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
+
+import com.orm.SugarContext;
+
+import re.neutrino.kanji_assist.dictionary.Record;
 
 class Dictionary {
+
+    Dictionary(Context context) {
+        SugarContext.init(context);
+    }
+
     void get_definition(DictionaryPopup dictionaryPopup, String text) {
         DictionaryBackgroundTask dictionaryBackgroundTask = new
                 DictionaryBackgroundTask(dictionaryPopup);
         Log.d("dictionary", text);
         dictionaryBackgroundTask.execute(text);
+    }
+
+    void save_record(Record record) {
+        record.save();
     }
 }

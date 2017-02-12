@@ -23,5 +23,13 @@ import java.util.ArrayList;
 
 public class Record extends SugarRecord {
     String kanji;
-    ArrayList<Entry> entry_list;
+    //ArrayList<Entry> entry_list;
+
+    public Record() {
+    }
+
+    /*public Record(String kanji, ArrayList<Entry> entries) {
+        this.kanji = kanji;
+        this.entry_list = entries;
+    }*/
 }
