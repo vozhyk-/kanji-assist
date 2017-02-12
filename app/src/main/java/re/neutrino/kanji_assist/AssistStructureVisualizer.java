@@ -107,11 +107,6 @@ public class AssistStructureVisualizer extends RelativeLayout {
                 addView(textView);
                 return null;
             }
-
-            private boolean nodeHasText(AnyAssistStructure.ViewNode node) {
-                return node.getText() != null &&
-                        !node.getText().toString().isEmpty();
-            }
         });
     }
 
@@ -123,7 +118,7 @@ public class AssistStructureVisualizer extends RelativeLayout {
 
         Log.d(TAG, offset + nodeToString(node, rect));
 
-        result.setText(node.getText());
+        result.setText(nodeGetTextToDisplay(node));
 
         setTextSize(result, node, offset);
 
@@ -145,9 +140,25 @@ public class AssistStructureVisualizer extends RelativeLayout {
         return result;
     }
 
+    private static CharSequence nodeGetTextToDisplay(AnyAssistStructure.ViewNode node) {
+        final CharSequence text = node.getText();
+        if (isNotEmpty(text))
+            return text;
+
+        return node.getHint();
+    }
+
+    private boolean nodeHasText(AnyAssistStructure.ViewNode node) {
+        return isNotEmpty(nodeGetTextToDisplay(node));
+    }
+
+    private static boolean isNotEmpty(CharSequence seq) {
+        return seq != null && !seq.toString().isEmpty();
+    }
+
     public static String nodeToString(AnyAssistStructure.ViewNode node, Rect rect) {
         StringBuilder msg = new StringBuilder()
-                .append(node.getText())
+                .append(nodeGetTextToDisplay(node))
                 .append("@")
                 .append(rect.toShortString())
                 .append(", class name: ")
