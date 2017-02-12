@@ -17,11 +17,17 @@
 package re.neutrino.kanji_assist;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.View;
 
 import java.io.IOException;
@@ -34,7 +40,7 @@ import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
  */
 public class AssistStructureVisualizerActivity extends AppCompatActivity {
     public static final String STRUCTURE_KEY = "structure";
-    public static final String STRUCTURE_RES_KEY = "structure_res";
+    public static final String FIXTURE_NAME_KEY = "fixture_name";
 
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -76,7 +82,11 @@ public class AssistStructureVisualizerActivity extends AppCompatActivity {
             hide();
         }
     };
+
+    private AnyAssistStructure structure;
+
     private AssistStructureVisualizer visualizer;
+
     private AssistStructureDebugUtil util;
 
     @Override
@@ -90,36 +100,63 @@ public class AssistStructureVisualizerActivity extends AppCompatActivity {
         visualizer = (AssistStructureVisualizer)
                 findViewById(R.id.visualizer_in_activity);
 
-        final AnyAssistStructure structure = getStructure();
-        if (structure != null) {
-            visualizer.show(structure);
-        }
+        loadFixture();
+        visualizer.show(structure);
     }
 
-    @Nullable
-    private AnyAssistStructure getStructure() {
+    private void loadFixture() {
         final Bundle extras = getIntent().getExtras();
 
-        if (extras == null) {
-            return getDefaultStructure();
-        }
+        if (loadStructureFromExtra(extras))
+            return;
 
-        final AnyAssistStructure structure = (AnyAssistStructure)
-                extras.get(STRUCTURE_KEY);
-        if (structure != null) {
-            return structure;
-        }
+        if (loadFixtureFromNameExtra(extras))
+            return;
 
-        final String structureResArg = extras.getString(STRUCTURE_RES_KEY);
-        final int structureRes = getResources().getIdentifier(
-                structureResArg, "raw", getPackageName());
-
-        return readStructure(structureRes);
+        loadDefaultStructure();
     }
 
-    @Nullable
-    private AnyAssistStructure getDefaultStructure() {
-        return readStructure(R.raw.settings_with_baselines);
+    private boolean loadStructureFromExtra(Bundle extras) {
+        if (extras == null)
+            return false;
+
+        structure = (AnyAssistStructure) extras.get(STRUCTURE_KEY);
+        return structure != null;
+    }
+
+    private boolean loadFixtureFromNameExtra(Bundle extras) {
+        if (extras == null)
+            return false;
+
+        final String fixtureName = extras.getString(FIXTURE_NAME_KEY);
+        //noinspection SimplifiableIfStatement
+        if (fixtureName == null)
+            return false;
+
+        return loadFixtureFromName(fixtureName);
+    }
+
+    private boolean loadFixtureFromName(String name) {
+        final int structureRes = getRawResourceByName(name);
+        if (structureRes == 0)
+            return false;
+
+        structure = readStructure(structureRes);
+
+        final int preScreenshotRes = getRawResourceByName(name + "_pre");
+        if (preScreenshotRes != 0)
+            loadPreScreenshot(preScreenshotRes);
+
+        return true;
+    }
+
+    private int getRawResourceByName(String name) {
+        return getResources().getIdentifier(
+                name, "raw", getPackageName());
+    }
+
+    private void loadDefaultStructure() {
+        structure = readStructure(R.raw.settings_with_baselines);
     }
 
     @Nullable
@@ -130,6 +167,24 @@ public class AssistStructureVisualizerActivity extends AppCompatActivity {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private void loadPreScreenshot(int resource) {
+        final Bitmap bitmap = BitmapFactory.decodeResource(
+                getResources(), resource);
+        Point size = getScreenSize();
+        final Bitmap scaledBitmap = Bitmap.createScaledBitmap(
+                bitmap, size.x, size.y, true);
+        contentView.setBackground(new BitmapDrawable(
+                getResources(), scaledBitmap));
+    }
+
+    @NonNull
+    private Point getScreenSize() {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point result = new Point();
+        display.getSize(result);
+        return result;
     }
 
     @Override
