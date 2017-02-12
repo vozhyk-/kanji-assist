@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -111,7 +112,7 @@ public class Visualizer extends RelativeLayout {
                     return null;
                 }
 
-                final TextView textView = recreateTextView(absNode);
+                final TextView textView = recreateViewWithSize(absNode);
                 addRecreatedView(textView);
                 return null;
             }
@@ -119,7 +120,14 @@ public class Visualizer extends RelativeLayout {
     }
 
     @NonNull
-    private TextView recreateTextView(AbsoluteViewNode absNode) {
+    private TextView recreateViewWithSize(AbsoluteViewNode absNode) {
+        final TextView result = recreateView(absNode);
+        setSize(absNode, result);
+        return result;
+    }
+
+    @NonNull
+    private TextView recreateView(AbsoluteViewNode absNode) {
         final AnyAssistStructure.ViewNode node = absNode.getNode();
         final Rect rect = absNode.getRect();
         final String logOffset = absNode.getLogOffset();
@@ -129,51 +137,62 @@ public class Visualizer extends RelativeLayout {
 
         Log.d(TAG, logOffset + absNode.toString());
 
+        result.setTag(absNode);
         result.setText(absNode.getTextToDisplay());
-
         setTextSize(result, node, logOffset);
-
         result.setTypeface(result.getTypeface(), node.getTextStyle());
-
         result.setAlpha(node.getAlpha());
 
         result.setOnClickListener(new OnClickListener(
                 new ScreenText(result.getText().toString(), rect)));
         result.setCustomSelectionActionModeCallback(
                 new SelectionCallback(result, absNode));
-
-        final RelativeLayout.LayoutParams params =
-                new RelativeLayout.LayoutParams(
-                        node.getWidth(), node.getHeight());
-        params.setMargins(rect.left, rect.top, 0, 0);
-        result.setLayoutParams(params);
-
         return result;
     }
 
+    private void setSize(AbsoluteViewNode absNode, TextView recreatedView) {
+        final AnyAssistStructure.ViewNode node = absNode.getNode();
+        final Rect rect = absNode.getRect();
+
+        final LayoutParams params = new LayoutParams(
+                node.getWidth(), node.getHeight());
+        params.setMargins(rect.left, rect.top, 0, 0);
+        recreatedView.setLayoutParams(params);
+    }
+
     private void showOverlappingViews(TextView view) {
-        final ArrayList<TextView> overlappingViews = findOverlappingViews(view);
+        final ArrayList<AbsoluteViewNode> overlappingViews =
+                findOverlappingNodes(view);
 
         Log.d(TAG, "overlapping views:");
-        for (TextView v: overlappingViews) {
-            Log.d(TAG, "    " + v.getText());
+        for (AbsoluteViewNode v: overlappingViews) {
+            Log.d(TAG, "    " + v);
         }
 
         final ListView container = (ListView) inflater.inflate(
                 R.layout.overlapping_views_popup, this, false);
-        container.setAdapter(new ArrayAdapter<>(
-                getContext(), R.layout.recreated_textview, overlappingViews));
+        container.setAdapter(new ArrayAdapter<AbsoluteViewNode>(
+                getContext(), 0, overlappingViews
+        ) {
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                return recreateView(getItem(i));
+            }
+        });
         addView(container);
     }
 
-    private ArrayList<TextView> findOverlappingViews(TextView selected) {
-        final ArrayList<TextView> result = new ArrayList<>();
+    private ArrayList<AbsoluteViewNode> findOverlappingNodes(
+            TextView selected) {
+        final ArrayList<AbsoluteViewNode> result = new ArrayList<>();
 
         final Rect selectedRect = viewGetGlobalVisibleRect(selected);
         for (TextView view: recreatedViews) {
             final Rect rect = viewGetGlobalVisibleRect(view);
-            if (Rect.intersects(selectedRect, rect))
-                result.add(view);
+            if (Rect.intersects(selectedRect, rect)) {
+                final AbsoluteViewNode absNode = (AbsoluteViewNode) view.getTag();
+                result.add(absNode);
+            }
         }
 
         return result;
