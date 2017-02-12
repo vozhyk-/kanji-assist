@@ -17,7 +17,6 @@
 package re.neutrino.kanji_assist;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
@@ -34,12 +33,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.dictionary_popup.DictionaryPopup;
 import re.neutrino.kanji_assist.text_extractor.AssistStructureWalker;
+import re.neutrino.kanji_assist.text_extractor.AssistStructureWalker.AbsoluteViewNode;
 import re.neutrino.kanji_assist.text_extractor.ScreenText;
 import re.neutrino.kanji_assist.text_extractor.TextExtractor;
 
@@ -107,15 +106,12 @@ public class Visualizer extends RelativeLayout {
 
         structureWalker.walkWindows(new AssistStructureWalker.Walker() {
             @Override
-            public ScreenText run(AnyAssistStructure.ViewNode node, Rect rect, int depth) {
-                if (!nodeHasText(node)) {
+            public ScreenText run(AbsoluteViewNode absNode) {
+                if (!absNode.hasText()) {
                     return null;
                 }
 
-                final String offset = AssistStructureWalker.getLogOffset(depth);
-
-                final TextView textView = recreateTextView(node, rect, depth,
-                        offset);
+                final TextView textView = recreateTextView(absNode);
                 addRecreatedView(textView);
                 return null;
             }
@@ -123,16 +119,19 @@ public class Visualizer extends RelativeLayout {
     }
 
     @NonNull
-    private TextView recreateTextView(AnyAssistStructure.ViewNode node,
-                                      Rect rect, int depth, String offset) {
+    private TextView recreateTextView(AbsoluteViewNode absNode) {
+        final AnyAssistStructure.ViewNode node = absNode.getNode();
+        final Rect rect = absNode.getRect();
+        final String logOffset = absNode.getLogOffset();
+
         final TextView result = (TextView)
                 inflater.inflate(R.layout.recreated_textview, this, false);
 
-        Log.d(TAG, offset + nodeToString(node, rect));
+        Log.d(TAG, logOffset + absNode.toString());
 
-        result.setText(nodeGetTextToDisplay(node));
+        result.setText(absNode.getTextToDisplay());
 
-        setTextSize(result, node, offset);
+        setTextSize(result, node, logOffset);
 
         result.setTypeface(result.getTypeface(), node.getTextStyle());
 
@@ -141,7 +140,7 @@ public class Visualizer extends RelativeLayout {
         result.setOnClickListener(new OnClickListener(
                 new ScreenText(result.getText().toString(), rect)));
         result.setCustomSelectionActionModeCallback(
-                new SelectionCallback(result, node));
+                new SelectionCallback(result, absNode));
 
         final RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(
@@ -180,58 +179,11 @@ public class Visualizer extends RelativeLayout {
         return result;
     }
 
-    private static CharSequence nodeGetTextToDisplay(AnyAssistStructure.ViewNode node) {
-        final CharSequence text = node.getText();
-        if (isNotEmpty(text))
-            return text;
-
-        return node.getHint();
-    }
-
-    private boolean nodeHasText(AnyAssistStructure.ViewNode node) {
-        return isNotEmpty(nodeGetTextToDisplay(node));
-    }
-
-    private static boolean isNotEmpty(CharSequence seq) {
-        return seq != null && !seq.toString().isEmpty();
-    }
-
     @NonNull
     private static Rect viewGetGlobalVisibleRect(View view) {
         final Rect rect = new Rect();
         view.getGlobalVisibleRect(rect);
         return rect;
-    }
-
-    public static String nodeToString(AnyAssistStructure.ViewNode node, Rect rect) {
-        StringBuilder msg = new StringBuilder()
-                .append(nodeGetTextToDisplay(node))
-                .append("@")
-                .append(rect.toShortString())
-                .append(", class name: ")
-                .append(node.getClassName())
-                .append(", text size: ")
-                .append(node.getTextSize())
-                .append(", scroll: ")
-                .append(new Point(node.getScrollX(), node.getScrollY()))
-                .append(", elevation: ")
-                .append(node.getElevation())
-                .append(", alpha: ")
-                .append(node.getAlpha());
-
-        if (node.getTextLineBaselines() != null)
-            msg = msg.append(", line baselines: ")
-                    .append(Arrays.toString(node.getTextLineBaselines()));
-
-        if (node.getTextLineCharOffsets() != null)
-            msg = msg.append(", line char offsets: ")
-                    .append(Arrays.toString(node.getTextLineCharOffsets()));
-
-        if (node.getTransformation() != null)
-            msg = msg.append(", transformation: ")
-                    .append(node.getTransformation());
-
-        return msg.toString();
     }
 
     private void setTextSize(TextView textView,
@@ -314,11 +266,11 @@ public class Visualizer extends RelativeLayout {
 
     private class SelectionCallback implements ActionMode.Callback {
         private final TextView textView;
-        private final AnyAssistStructure.ViewNode node;
+        private final AbsoluteViewNode absNode;
 
-        public SelectionCallback(TextView textView, AnyAssistStructure.ViewNode node) {
+        public SelectionCallback(TextView textView, AbsoluteViewNode absNode) {
             this.textView = textView;
-            this.node = node;
+            this.absNode = absNode;
         }
 
         @Override
@@ -379,11 +331,11 @@ public class Visualizer extends RelativeLayout {
         }
 
         private void inspectView() {
-            Log.d(TAG, "inspect: " + nodeToString(node, new Rect()));
+            Log.d(TAG, "inspect: " + absNode);
         }
+
         @Override
         public void onDestroyActionMode(ActionMode mode) {
         }
-
     }
 }

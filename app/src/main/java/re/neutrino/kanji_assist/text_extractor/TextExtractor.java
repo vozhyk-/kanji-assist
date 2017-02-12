@@ -25,6 +25,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
+import re.neutrino.kanji_assist.text_extractor.AssistStructureWalker.AbsoluteViewNode;
 
 public class TextExtractor {
 
@@ -38,7 +39,9 @@ public class TextExtractor {
     public ScreenText getSelectedText() {
         return structureWalker.walkWindows(new AssistStructureWalker.Walker() {
             @Override
-            public ScreenText run(AnyAssistStructure.ViewNode node, Rect rect, int depth) {
+            public ScreenText run(AbsoluteViewNode absNode) {
+                final AnyAssistStructure.ViewNode node = absNode.getNode();
+
                 if (node.getTextSelectionStart() == -1 ||
                         node.getTextSelectionStart() == node.getTextSelectionEnd()) {
                     return null;
@@ -47,7 +50,7 @@ public class TextExtractor {
                 final CharSequence text = node.getText().subSequence(
                         node.getTextSelectionStart(),
                         node.getTextSelectionEnd());
-                return makeScreenText(text, rect);
+                return makeScreenText(text, absNode.getRect());
             }
         });
     }
@@ -61,23 +64,21 @@ public class TextExtractor {
             private String TAG = getClass().getName();
 
             @Override
-            public ScreenText run(AnyAssistStructure.ViewNode node, Rect rect, int depth) {
+            public ScreenText run(AbsoluteViewNode absNode) {
+                final Rect rect = absNode.getRect();
+
                 final RectF rectF = new RectF(rect);
                 if (!rectF.contains(touch.x, touch.y) ||
-                        node.getText() == null ||
-                        node.getText().toString().isEmpty()) {
+                        !absNode.hasText()) {
                     return null;
                 }
 
-                final String PREFIX = AssistStructureWalker.getLogOffset(depth);
-                Log.d(TAG, PREFIX +
-                        "Node: " +
-                        node.getText() + " @ " +
-                        rect.toShortString());
+                final String logOffset = absNode.getLogOffset();
+                Log.d(TAG, logOffset + "Node: " + absNode);
 
                 if (mostNarrow[0] != null) {
                     if (area(rect) > area(mostNarrow[0].getRect())) {
-                        Log.d(TAG, PREFIX + "ignoring larger node ^^^");
+                        Log.d(TAG, logOffset + "ignoring larger node ^^^");
                         return null;
                     }
 
@@ -86,24 +87,9 @@ public class TextExtractor {
                         Log.w(TAG, "Found a view containing the touch that doesn't intersect with the other such views!");
                 }
 
-                mostNarrow[0] = makeScreenText(node.getText(), rect);
-                Log.d(TAG, PREFIX + "most narrow: " + mostNarrow[0]);
-                Log.d(TAG, PREFIX + "most narrow: " +
-                        node.getHint() + " " +
-                        node.getContentDescription() + " " +
-                        "\n" +
-                        node.isAccessibilityFocused() + " " +
-                        node.isActivated() + " " +
-                        node.isFocusable() + " " +
-                        node.isFocused() + " " +
-                        node.isSelected() + " " +
-                        "\n" +
-                        node.isEnabled() + " " +
-                        node.isClickable() + " " +
-                        node.isContextClickable() + " " +
-                        node.isLongClickable() + " " +
-                        node.isCheckable() + " " +
-                        node.isChecked());
+                mostNarrow[0] = makeScreenText(absNode.getTextToDisplay(), rect);
+                Log.d(TAG, logOffset + "most narrow: " + mostNarrow[0]);
+                Log.d(TAG, logOffset + "most narrow: " + absNode);
                 return null;
             }
 
