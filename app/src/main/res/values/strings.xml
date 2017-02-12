@@ -19,4 +19,22 @@
     <string name="please_enable_assistant">Please set the active assistant to Kanji Assist.</string>
     <string name="show_dictionary_label">Show dictionary</string>
     <string name="inspect_label">Inspect</string>
+    <!-- Preferences -->
+    <string name="pref_onlineProvider">
+        Fetch definitions from online dictionary
+    </string>
+    <string name="pref_dictionaryProvider">
+        Online dictionary provider
+    </string>
+    <string name="pref_dictionaryProviderType">
+        Pick an online dictionary provider
+    </string>
+    <array name="pref_dictionaryProvider_entries">
+        <item>jisho.org</item>
+    </array>
+    <array name="pref_dictionaryProvider_values">
+        <item>jisho.org</item>
+    </array>
+    <string name="pref_dictionaryProvider_default">jisho.org</string>
+    <string name="settings">Settings</string>
 </resources>

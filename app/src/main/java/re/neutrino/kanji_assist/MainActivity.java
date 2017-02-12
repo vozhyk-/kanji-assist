@@ -22,6 +22,9 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ensureAssistantEnabled();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings_menu, menu);
+        return true;
     }
 
     private void ensureAssistantEnabled() {
@@ -59,5 +68,11 @@ public class MainActivity extends AppCompatActivity {
         final String assistantPackage = cn.getPackageName();
 
         return assistantPackage.equals(getPackageName());
+    }
+
+    public void openSettings(MenuItem item) {
+        Intent intent = new Intent(this,
+                re.neutrino.kanji_assist.settings.Settings.class);
+        startActivity(intent);
     }
 }

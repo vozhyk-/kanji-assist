@@ -17,7 +17,9 @@
 package re.neutrino.kanji_assist.dictionary_popup;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -40,11 +42,9 @@ import java.util.List;
 
 import re.neutrino.kanji_assist.R;
 import re.neutrino.kanji_assist.dictionary.DictionaryParser;
+import re.neutrino.kanji_assist.settings.Settings;
 
 class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
-    private final static  String providerURL = "jisho.org";
-    private final static String baseApiUrl =
-            "http://" + providerURL + "/api/v1/search/words?keyword=";
     private final static String debugName = "backgroundTask";
     private HttpURLConnection connection;
     private URL url;
@@ -81,6 +81,21 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
     }
 
     private DictionaryParser fetch(String text) throws IOException {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        String dictionaryProvider =
+                sharedPref.getString(Settings.KEY_PREF_DICTIONARYROVIDER, "");
+        String baseApiUrl;
+        switch (dictionaryProvider) {
+            case "jisho.org":
+                baseApiUrl = "http://jisho.org/api/v1/search/words?keyword=";
+                break;
+            default:
+                Log.e(debugName, "Unknown dictionary provider" +
+                        dictionaryProvider);
+                return null;
+        }
+
         String query = URLEncoder.encode(text, "utf-8");
         url = new URL(baseApiUrl + query);
         Log.d(debugName, "URL: " + url);
@@ -126,7 +141,7 @@ class DictionaryBackgroundTask extends AsyncTask<String, Void, String> {
             e.printStackTrace();
             return "Error: malformed URL";
         } catch (UnknownHostException e) {
-            return "Error: Failed to reach " + providerURL;
+            return "Error: Failed to reach provider's API";
         } catch (IOException e) {
             e.printStackTrace();
             return "Error: Failed to fetch definitions";

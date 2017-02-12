@@ -18,15 +18,21 @@ package re.neutrino.kanji_assist.dictionary_popup;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import re.neutrino.kanji_assist.R;
 import re.neutrino.kanji_assist.dictionary.DictionaryDbContract;
 import re.neutrino.kanji_assist.dictionary.DictionaryDbHelper;
 import re.neutrino.kanji_assist.dictionary.DictionaryParser;
+import re.neutrino.kanji_assist.settings.Settings;
 
 class Dictionary {
     private final String debugName = "Dictionary";
@@ -88,9 +94,23 @@ class Dictionary {
     }
 
     void get_definition(DictionaryPopup dictionaryPopup, String text) {
-        DictionaryBackgroundTask dictionaryBackgroundTask = new
-                DictionaryBackgroundTask(dictionaryPopup);
-        Log.d("dictionary", text);
-        dictionaryBackgroundTask.execute(text);
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(
+                        dictionaryPopup.getContext());
+        Boolean onlineProvider =
+                sharedPref.getBoolean(Settings.KEY_PREF_ONLINEPROVIDER, false);
+        if (onlineProvider) {
+            DictionaryBackgroundTask dictionaryBackgroundTask = new
+                    DictionaryBackgroundTask(dictionaryPopup);
+            Log.d("dictionary", text);
+            dictionaryBackgroundTask.execute(text);
+        } else {
+            //TODO fetch definition from local source
+            ScrollView scrollView =
+                    (ScrollView) dictionaryPopup.findViewById(R.id.scrollView);
+            TextView textView = new TextView(dictionaryPopup.getContext());
+            textView.setText("Offline dictionary is not supported yet");
+            scrollView.addView(textView);
+        }
     }
 }
