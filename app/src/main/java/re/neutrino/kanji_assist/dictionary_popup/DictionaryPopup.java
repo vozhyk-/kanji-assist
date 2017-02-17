@@ -45,7 +45,7 @@ public class DictionaryPopup extends GridLayout {
         super(context, attrs);
 
         LayoutInflater inflater = LayoutInflater.from(context);
-        inflater.inflate(R.layout.popup, this);
+        inflater.inflate(R.layout.dictionary_popup, this);
 
         this.dictionary = new Dictionary();
     }
@@ -59,12 +59,12 @@ public class DictionaryPopup extends GridLayout {
         close();
 
         final Resources resources = getContext().getResources();
-        float vertical_margin = resources.getDimension(
+        float verticalMargin = resources.getDimension(
                 R.dimen.popup_vertical_margin);
         float height = resources.getDimension(R.dimen.popup_height);
 
         PointF popupPosition = getPopupPosition(
-                screenText, vertical_margin, height);
+                screenText, verticalMargin, height);
 
         final RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(

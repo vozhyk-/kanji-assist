@@ -31,7 +31,7 @@
         android:gravity="center"
         android:keepScreenOn="true">
 
-        <re.neutrino.kanji_assist.Visualizer
+        <re.neutrino.kanji_assist.visualizer.Visualizer
             android:id="@+id/visualizer_in_activity"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

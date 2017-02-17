@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package re.neutrino.kanji_assist;
+package re.neutrino.kanji_assist.visualizer;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -29,13 +29,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import re.neutrino.kanji_assist.BuildConfig;
+import re.neutrino.kanji_assist.R;
 import re.neutrino.kanji_assist.assist_structure.AnyAssistStructure;
 import re.neutrino.kanji_assist.dictionary_popup.DictionaryPopup;
 import re.neutrino.kanji_assist.text_extractor.AssistStructureWalker;
@@ -44,7 +45,8 @@ import re.neutrino.kanji_assist.text_extractor.ScreenText;
 import re.neutrino.kanji_assist.text_extractor.TextExtractor;
 
 public class Visualizer extends RelativeLayout {
-    private DictionaryPopup dictionaryPopup;
+    private final DictionaryPopup dictionaryPopup;
+    private final OverlappingViewsPopup overlappingViewsPopup;
 
     private final LayoutInflater inflater;
 
@@ -61,6 +63,7 @@ public class Visualizer extends RelativeLayout {
         inflater.inflate(R.layout.visualizer, this);
 
         dictionaryPopup = new DictionaryPopup(getContext());
+        overlappingViewsPopup = new OverlappingViewsPopup(getContext());
     }
 
     public Visualizer(Context context) {
@@ -161,6 +164,8 @@ public class Visualizer extends RelativeLayout {
     }
 
     private void showOverlappingViews(TextView view) {
+        removeView(overlappingViewsPopup);
+
         final ArrayList<AbsoluteViewNode> overlappingViews =
                 findOverlappingNodes(view);
 
@@ -169,17 +174,8 @@ public class Visualizer extends RelativeLayout {
             Log.d(TAG, "    " + v);
         }
 
-        final ListView container = (ListView) inflater.inflate(
-                R.layout.overlapping_views_popup, this, false);
-        container.setAdapter(new ArrayAdapter<AbsoluteViewNode>(
-                getContext(), 0, overlappingViews
-        ) {
-            @Override
-            public View getView(int i, View view, ViewGroup viewGroup) {
-                return recreateView(getItem(i));
-            }
-        });
-        addView(container);
+        addView(overlappingViewsPopup);
+        overlappingViewsPopup.show(new RecreatingAdapter(overlappingViews));
     }
 
     private ArrayList<AbsoluteViewNode> findOverlappingNodes(
@@ -355,6 +351,17 @@ public class Visualizer extends RelativeLayout {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+        }
+    }
+
+    private class RecreatingAdapter extends ArrayAdapter<AbsoluteViewNode> {
+        public RecreatingAdapter(ArrayList<AbsoluteViewNode> nodes) {
+            super(Visualizer.this.getContext(), 0, nodes);
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            return recreateView(getItem(i));
         }
     }
 }
